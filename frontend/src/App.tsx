@@ -34,8 +34,14 @@ export default function App(){
     return(
         <div className="flex w-screen h-screen gap-30">
           {(toggleSignIn || toggleSignUp) && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            {toggleSignIn && <SignIn/>}
-            {toggleSignUp && <SignUp/>}
+            {toggleSignIn && <div className="relative flex w-screen h-screen items-center justify-center bg-black/60 backdrop-blur-sm">
+                <button onClick={() => setToggleSignIn(false)}className="hover:cursor-pointer absolute top-4 right-4 z-10 text-xl font-sans font-bold text-zinc-400 hover:text-zinc-600 transition-colors">×</button>
+                <SignIn/>
+              </div>}
+            {toggleSignUp && <div className="relative flex w-screen h-screen items-center justify-center bg-black/60 backdrop-blur-sm">
+                <button onClick={() => setToggleSignUp(false)}className="hover:cursor-pointer  absolute top-4 right-4 z-10 text-xl font-sans font-bold text-zinc-400 hover:text-zinc-600 transition-colors">×</button>
+                <SignUp/>
+              </div>}
           </div>}
           <div id = "left-hand-side" className="flex flex-col gap-3 bg-gray-300 h-full w-1/4">
             <div id = "header" className="flex p-3 gap-2 h-20 center justify-center my-5">
