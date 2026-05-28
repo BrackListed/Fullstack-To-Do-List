@@ -2,6 +2,7 @@ import "dotenv/config"
 import express from "express"
 import cors from "cors"
 import { Pool } from "pg"
+import { clerkMiddleware } from '@clerk/express'
 
 //npx nodemon --exec ts-node index.ts
 
@@ -12,6 +13,7 @@ const app = express()
 
 app.use(express.json())
 app.use(cors())
+app.use(clerkMiddleware())
 
 app.delete("/data/:id", async (req, res) => {
     await pool.query("DELETE FROM tasks WHERE id = $1", [req.params.id])
