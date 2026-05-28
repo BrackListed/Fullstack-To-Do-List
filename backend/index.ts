@@ -3,11 +3,12 @@ import express from "express"
 import cors from "cors"
 import { Pool } from "pg"
 import { clerkMiddleware } from '@clerk/express'
+import { drizzle } from 'drizzle-orm/node-postgres';
 
 //npx nodemon --exec ts-node index.ts
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL})
-
+const db = drizzle(process.env.DATABASE_URL!);
 const app = express()
 
 
