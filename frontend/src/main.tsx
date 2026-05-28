@@ -3,15 +3,13 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { Tasks } from './pages/Tasks.tsx'
 
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
     <Routes>
-      <Route path = "/" element = {<App />}></Route>
-      <Route path = "/tasks" element = {<div className='flex-1'><Tasks/></div>}></Route>
+      <Route path = "/" element = {<div className='flex-1'><App /></div>}></Route>
     </Routes>
     </BrowserRouter>
   </StrictMode>,
