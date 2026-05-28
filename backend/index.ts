@@ -20,6 +20,11 @@ app.delete("/data/:id", async (req, res) => {
     res.json({message: "Deleted"})
 })
 
+app.post("/webhooks/clerk", express.raw({type: "application/json"}), async(req, res) => {
+    console.log(req.body)
+    res.json({message: "Clerk info received!"})
+})
+
 app.post("/data", async (req, res) => {
     await pool.query("INSERT into tasks(name, done) VALUES($1, $2)", [req.body.name, false])
     res.json([{message: "Task added!"}])
