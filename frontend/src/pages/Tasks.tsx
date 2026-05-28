@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react"
+import axios from "axios";
 
 interface taskType{
     name: string
     id: number;
+    done: boolean
 }
 export function Tasks(){
     const [tasks, setTask] = useState<taskType[]>([])
 
     useEffect(() => {
         const fetchExpressData = async() => {
-        const response = await fetch("http://localhost:3000/data")
-        const temptask = await response.json()
-        setTask(temptask)
+        const response = await axios.get("http://localhost:3000/data")
+        setTask(response.data)
     }
     
         fetchExpressData()
     }, [])
+
 
     return(
         <div className="flex w-screen h-screen items-center justify-center">
