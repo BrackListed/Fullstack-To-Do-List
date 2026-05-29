@@ -23,7 +23,10 @@ export default function App(){
         setToggleSignIn = {setToggleSignIn}
         setToggleSignUp = {setToggleSignUp}/>
         </div>}></Route>
-      <Route path = "/Completed" element = {<div className='flex-1'><Completed/></div>}></Route>
+      <Route path = "/Completed" element = {<div className='flex-1'><Completed
+        setToggleSignIn = {setToggleSignIn}
+        setToggleSignUp = {setToggleSignUp}
+      /></div>}></Route>
     </Routes>
     </ClerkProvider>
     </BrowserRouter>
