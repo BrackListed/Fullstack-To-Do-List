@@ -4,7 +4,7 @@ import { ListChecks } from 'lucide-react';
 import { Link } from "react-router-dom";
 import { SignIn, SignUp, useAuth, UserButton, useUser } from "@clerk/react";
 
-
+axios.defaults.withCredentials = true
 
 interface taskType{
     content: string
@@ -20,7 +20,7 @@ export default function App(){
 
     useEffect(() => {
       const fetchExpressData = async() => {
-        const response = await axios.get("http://localhost:3000/data")
+        const response = await axios.get("http://localhost:3000/data", {withCredentials: true})
         setTask(response.data)
     }
       fetchExpressData()

@@ -7,15 +7,16 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { verifyWebhook } from '@clerk/express/webhooks'
 
 //npx nodemon --exec ts-node index.ts
-
+const app = express()
+app.use(cors({origin: "http://localhost:5173", credentials: true}))
+app.use(clerkMiddleware())
 const pool = new Pool({ connectionString: process.env.DATABASE_URL})
 const db = drizzle(process.env.DATABASE_URL!);
-const app = express()
 
 
 app.use(express.json())
-app.use(cors())
-app.use(clerkMiddleware())
+
+
 
 
 app.post('/webhooks/clerk', express.raw({ type: 'application/json' }), async (req, res) => {
@@ -27,7 +28,7 @@ app.post('/webhooks/clerk', express.raw({ type: 'application/json' }), async (re
         console.log('Webhook payload:', evt.data)
         if(evt.type === "user.created"){
             const {id, email_addresses, first_name} = evt.data
-            await pool.query("INSERT INTO users(clerkUserId, email, username) VALUES($1, $2, $3)", [id, email_addresses[0]?.email_address ?? "", first_name])
+            await pool.query("INSERT INTO users(clerk_user_id, email, username) VALUES($1, $2, $3)", [id, email_addresses[0]?.email_address ?? "", first_name])
         }
         return res.send('Webhook received')
     } catch (err) {
@@ -41,21 +42,23 @@ app.delete("/data/:id", async (req, res) => {
     res.json({message: "Deleted"})
 })
 
-app.post("/webhooks/clerk", express.raw({type: "application/json"}), async(req, res) => {
-    console.log(req.body)
-    res.json({message: "Clerk info received!"})
-})
 
 app.post("/data", async (req, res) => {
-    console.log(getAuth(req))
-    await pool.query("INSERT into tasks(content, completed) VALUES($1, $2)", [req.body.content, false])
+    const {userId} = (getAuth(req))
+    //you're the user, this thing will find your id by checking which clerkuserid you have right now
+    const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [userId])
+    console.log(userId)
+    console.log(id.rows)
+    await pool.query("INSERT into tasks(user_id, content, completed) VALUES($1, $2, $3)", [id.rows[0].id,req.body.content, false])
     console.log(req.body)
     res.json([{message: "Task added!"}])
 })
 
 
 app.get("/data", async (req, res) => {
-    const result = await pool.query("SELECT * FROM tasks")
+    const {userId} = getAuth(req)
+    const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [userId])
+    const result = await pool.query("SELECT * FROM tasks WHERE user_id = $1", [id.rows[0].id])
     res.json(result.rows)
 })
 
