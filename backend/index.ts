@@ -27,13 +27,14 @@ app.post("/webhooks/clerk", express.raw({type: "application/json"}), async(req, 
 })
 
 app.post("/data", async (req, res) => {
-    await pool.query("INSERT into tasks(name, done) VALUES($1, $2)", [req.body.name, false])
+    await pool.query("INSERT into tasks(content, completed) VALUES($1, $2)", [req.body.content, false])
+    console.log(req.body)
     res.json([{message: "Task added!"}])
 })
 
+
 app.get("/data", async (req, res) => {
     const result = await pool.query("SELECT * FROM tasks")
-    console.log(result.rows)
     res.json(result.rows)
 })
 

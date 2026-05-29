@@ -7,7 +7,7 @@ import { SignIn, SignUp, useAuth, UserButton } from "@clerk/react";
 
 
 interface taskType{
-    name: string
+    content: string
     id: number;
     done: boolean
 }
@@ -67,7 +67,7 @@ export default function App(){
                 {tasks.map((task: taskType) => (
                     <div className="flex gap-3 items-center my-4">
                         <button className="w-30 text-zinc-50 text-center bg-purple-600 rounded-md p-3 hover:cursor-pointer hover:brightness-90 hover:scale-105 transition-all font-bold ">Mark as Done</button>
-                        <div className="flex-1 text-zinc-50 bg-zinc-800 rounded-lg h-full p-5 text-2xl">{task.name}</div>
+                        <div className="flex-1 text-zinc-50 bg-zinc-800 rounded-lg h-full p-5 text-2xl">{task.content}</div>
                         <button onClick = {() => deleteTask(task)}className="w-30 text-slate-950 bg-red-600 p-5 text-2xl text-center font-bold rounded-md hover: cursor-pointer hover:brightness-90 hover:scale-105 transition-all  ">DELETE</button>
                     </div>
                 ))}
@@ -75,9 +75,9 @@ export default function App(){
         </div>
     )
 
-    async function addTask(input: string){{
-        await axios.post("http://localhost:3000/data/", { name: input })
-    }}
+    async function addTask(input: string){
+        await axios.post("http://localhost:3000/data/", { content: input })
+    }
     async function deleteTask(task: taskType){
         await axios.delete(`http://localhost:3000/data/${task.id}`)
     }
