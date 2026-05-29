@@ -1,5 +1,5 @@
 import { useAuth, UserButton, useUser } from "@clerk/react"
-import { ListChecks } from "lucide-react"
+import { Home, ListChecks } from "lucide-react"
 import { Link } from "react-router-dom"
 
 interface LeftProps{
@@ -22,7 +22,8 @@ export function Left({setToggleSignIn, setToggleSignUp}: LeftProps){
                 </div>}
             </div>
             <div id = "panels" className="flex-col gap-3 p-3 full w-full">
-                <Link to = "/done"><div className="flex text-2xl text-center hover:bg-gray-200 rounded-lg hover:cursor-pointer hover:p-1 hover:scale-105 transition-all items-center h-fit gap-3"><ListChecks className="text-2xl"/><span>Tasks Done</span></div></Link>
+                <Link to = "/"><div className="flex text-2xl text-center hover:bg-gray-200 rounded-lg hover:cursor-pointer hover:p-1 hover:scale-105 transition-all items-center h-fit gap-3"><Home className="text-2xl"/><span>Home</span></div></Link>
+                <Link to = "/Completed"><div className="flex text-2xl text-center hover:bg-gray-200 my-5 rounded-lg hover:cursor-pointer hover:p-1 hover:scale-105 transition-all items-center h-fit gap-3"><ListChecks className="text-2xl"/><span>Tasks Done</span></div></Link>
             </div>
         </div>
     )
