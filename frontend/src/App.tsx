@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import axios from "axios";
 import { ListChecks } from 'lucide-react';
 import { Link } from "react-router-dom";
-import { SignIn, SignUp, useAuth, UserButton } from "@clerk/react";
+import { SignIn, SignUp, useAuth, UserButton, useUser } from "@clerk/react";
 
 
 
@@ -34,6 +34,7 @@ export default function App(){
     
       fetchExpressData()
     }, [tasks])
+    const { user } = useUser()
     return(
         <div className="flex w-screen h-screen gap-30">
           {(toggleSignIn || toggleSignUp) && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -52,7 +53,8 @@ export default function App(){
               {isSignedIn === false && <button onClick = {() => setToggleSignUp(true)}className="bg-zinc-200 hover:bg-zinc-300 text-zinc-800 font-medium py-2 px-4 flex-1 rounded transition-colors">Sign Up</button>}
               {isSignedIn && <div className="flex gap-2 items-center justify-start">
                 <UserButton appearance={{ elements: { avatarBox: { width: "80px", height: "80px" } } }} />
-                <span className="text-2xl font-semibold">SIMPLE TO DO LIST</span>
+                {!useUser && <span className="text-2xl font-semibold">SIMPLE TO DO LIST</span>}
+                <span className="flex-1 w-full text-2xl font-semibold">Welcome, {user?.firstName}</span>
                 </div>}
             </div>
             <div id = "panels" className="flex-col gap-3 p-3 full w-full">

@@ -11,7 +11,7 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
     <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
     <Routes>
-      <Route path = "/" element = {<div className='flex-1'><App /></div>}></Route>
+      <Route path = "/" element = {<div className='flex-1'><App/></div>}></Route>
     </Routes>
     </ClerkProvider>
     </BrowserRouter>
