@@ -17,8 +17,6 @@ const db = drizzle(process.env.DATABASE_URL!);
 app.use(express.json())
 
 
-
-
 app.post('/webhooks/clerk', express.raw({ type: 'application/json' }), async (req, res) => {
     try {
         const evt = await verifyWebhook(req)
@@ -49,6 +47,9 @@ app.post("/data", async (req, res) => {
     const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [userId])
     console.log(userId)
     console.log(id.rows)
+    if(userId){
+        
+    }
     await pool.query("INSERT into tasks(user_id, content, completed) VALUES($1, $2, $3)", [id.rows[0].id,req.body.content, false])
     console.log(req.body)
     res.json([{message: "Task added!"}])
