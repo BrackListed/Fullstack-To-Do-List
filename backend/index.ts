@@ -8,7 +8,7 @@ import { verifyWebhook } from '@clerk/express/webhooks'
 
 //npx nodemon --exec ts-node index.ts
 const app = express()
-app.use(cors({origin: "http://localhost:5173", credentials: true}))
+app.use(cors({origin: process.env.FRONTEND_URL || "http://localhost:5173", credentials: true}))
 app.use(clerkMiddleware())
 const pool = new Pool({ connectionString: process.env.DATABASE_URL})
 const db = drizzle(process.env.DATABASE_URL!);
@@ -90,5 +90,5 @@ app.get("/data", async (req, res) => {
 })
 
 
-
-app.listen(3000, () => console.log("Listening on port 3000"))
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => console.log(`Listening on ${PORT}`))

@@ -1,6 +1,7 @@
 import { Check, X } from "lucide-react";
 import { Left } from "../Components/Left";
 import { useEffect, useState } from "react";
+import { API_URL } from "../api"
 import axios from "axios";
 
 interface CompletedProps{
@@ -19,7 +20,7 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
     const [hasDeletedTask, sethasDeletedTask] = useState(false)
     useEffect(() => {
         const fetchExpressData = async() => {
-            const response = await axios.get("http://localhost:3000/complete", {withCredentials: true})
+            const response = await axios.get(`${API_URL}/complete`, {withCredentials: true})
             setCompletedTasks(response.data)
         }
 
@@ -28,7 +29,7 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
 
     useEffect(() => {
         const fetchExpressData = async() => {
-            const response = await axios.get("http://localhost:3000/complete", {withCredentials: true})
+            const response = await axios.get(`${API_URL}/complete`, {withCredentials: true})
             setCompletedTasks(response.data)
         }
 
@@ -77,7 +78,7 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
         </div>
     )
     async function deleteTask(id: string){
-        await axios.delete(`http://localhost:3000/complete/${id}`)
+        await axios.delete(`${API_URL}/complete/${id}`)
         sethasDeletedTask(true)
     }
 }

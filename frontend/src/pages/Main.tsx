@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import axios from "axios";
 import { SignIn, SignUp } from "@clerk/react";
 import { Check, Rotate3D, X } from "lucide-react";
+import { API_URL } from "../api"
+
 
 axios.defaults.withCredentials = true
 
@@ -29,7 +31,7 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
     const [hasUpdatedTask, setHasUpdatedTask] = useState(false)
     useEffect(() => {
       const fetchExpressData = async() => {
-        const response = await axios.get("http://localhost:3000/data", {withCredentials: true})
+        const response = await axios.get(`${API_URL}/data`, {withCredentials: true})
         setTask(response.data)
     }
       fetchExpressData()
@@ -37,7 +39,7 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
 
     useEffect(() => {
       const fetchExpressData = async() => {
-        const response = await axios.get("http://localhost:3000/data")
+        const response = await axios.get(`${API_URL}/data`)
         setTask(response.data)
         setIsLoading(false)
       }
@@ -115,20 +117,20 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
     )
 
     async function addTask(input: string){
-        await axios.post("http://localhost:3000/data/", { content: input })
+        await axios.post(`${API_URL}/data/`, { content: input })
         sethasAddedTask(true)
     }
 
     async function updateTask(taskContent: string, id: string){
-        await axios.put(`http://localhost:3000/update/${id}`, { content: taskContent})
+        await axios.put(`${API_URL}/update/${id}`, { content: taskContent})
         setHasUpdatedTask(true)
     }
     async function deleteTask(task: taskType){
-        await axios.delete(`http://localhost:3000/data/${task.id}`)
+        await axios.delete(`${API_URL}/data/${task.id}`)
         sethasDeletedTask(true)
     }
 
     async function CompleteTask(task: taskType){
-        await axios.post(`http://localhost:3000/complete/${task.id}`, { id: task.id})
+        await axios.post(`${API_URL}/complete/${task.id}`, { id: task.id})
     }
 }
