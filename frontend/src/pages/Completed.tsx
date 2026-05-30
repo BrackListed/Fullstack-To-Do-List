@@ -22,7 +22,8 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
     const { getToken } = useAuth()
     useEffect(() => {
         const fetchExpressData = async() => {
-            const response = await axios.get(`${API_URL}/complete`, {withCredentials: true})
+            const token = await getToken()
+            const response = await axios.get(`${API_URL}/complete`, { headers: { Authorization: `Bearer ${token}` }, withCredentials: true })
             setCompletedTasks(response.data)
         }
 
@@ -31,7 +32,8 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
 
     useEffect(() => {
         const fetchExpressData = async() => {
-            const response = await axios.get(`${API_URL}/complete`, {withCredentials: true})
+            const token = await getToken()
+            const response = await axios.get(`${API_URL}/complete`, {headers: {Authorization: `Bearer${token}` }, withCredentials: true})
             setCompletedTasks(response.data)
         }
 
