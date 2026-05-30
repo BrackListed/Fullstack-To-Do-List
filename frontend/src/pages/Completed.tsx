@@ -3,6 +3,7 @@ import { Left } from "../Components/Left";
 import { useEffect, useState } from "react";
 import { API_URL } from "../api"
 import axios from "axios";
+import { useAuth } from "@clerk/react";
 
 interface CompletedProps{
     setToggleSignIn: (value: boolean) => void
@@ -18,6 +19,7 @@ interface CompletedTasksType {
 export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
     const [completedTasks, setCompletedTasks] = useState<CompletedTasksType[]>([])
     const [hasDeletedTask, sethasDeletedTask] = useState(false)
+    const { getToken } = useAuth()
     useEffect(() => {
         const fetchExpressData = async() => {
             const response = await axios.get(`${API_URL}/complete`, {withCredentials: true})
@@ -78,7 +80,8 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
         </div>
     )
     async function deleteTask(id: string){
-        await axios.delete(`${API_URL}/complete/${id}`)
+        const token = await getToken()
+        await axios.delete(`${API_URL}/complete/${id}`, { headers: { Authorization: `Bearer ${token}`}})
         sethasDeletedTask(true)
     }
 }

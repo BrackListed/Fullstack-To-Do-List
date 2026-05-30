@@ -3,7 +3,7 @@ import axios from "axios";
 import { SignIn, SignUp } from "@clerk/react";
 import { Check, Rotate3D, X } from "lucide-react";
 import { API_URL } from "../api"
-
+import { useAuth } from "@clerk/react";
 
 axios.defaults.withCredentials = true
 
@@ -21,6 +21,7 @@ interface MainProps {
 }
 
 export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSignUp}: MainProps){
+    const { getToken } = useAuth()
     const [tasks, setTask] = useState<taskType[]>([])
     const [inputValue, setInputValue] = useState("")
     const [isChanging, setIsChanging] = useState(false)
@@ -117,20 +118,24 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
     )
 
     async function addTask(input: string){
-        await axios.post(`${API_URL}/data/`, { content: input })
+        const token = await getToken()
+        await axios.post(`${API_URL}/data/`, { content: input }, { headers: { Authorization: `Bearer ${token}`}})
         sethasAddedTask(true)
     }
 
     async function updateTask(taskContent: string, id: string){
-        await axios.put(`${API_URL}/update/${id}`, { content: taskContent})
+        const token = await getToken()
+        await axios.put(`${API_URL}/update/${id}`, { content: taskContent}, { headers: { Authorization: `Bearer ${token}`}})
         setHasUpdatedTask(true)
     }
     async function deleteTask(task: taskType){
-        await axios.delete(`${API_URL}/data/${task.id}`)
+        const token = await getToken()
+        await axios.delete(`${API_URL}/data/${task.id}`, { headers: { Authorization: `Bearer ${token}`}})
         sethasDeletedTask(true)
     }
 
     async function CompleteTask(task: taskType){
-        await axios.post(`${API_URL}/complete/${task.id}`, { id: task.id})
+        const token = await getToken()
+        await axios.post(`${API_URL}/complete/${task.id}`, { id: task.id}, { headers: { Authorization: `Bearer ${token}`}})
     }
 }
