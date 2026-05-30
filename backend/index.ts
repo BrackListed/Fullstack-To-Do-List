@@ -62,6 +62,11 @@ app.delete("/complete/:id", async(req, res) => {
     res.json({message: "Deleted the completed task"})
 })
 
+app.put("/update/:id", async(req, res) => {
+    await pool.query("UPDATE tasks SET content = $1 WHERE id = $2", [req.body.content, req.params.id]) 
+    res.json({message: "Tasks updated successfully!"})
+})
+
 app.post("/data", async (req, res) => {
     const {userId} = (getAuth(req))
     //you're the user, this thing will find your id by checking which clerkuserid you have right now

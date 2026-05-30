@@ -9,7 +9,7 @@ interface CompletedProps{
 }
 
 interface CompletedTasksType {
-    id: number;
+    id: string;
     userId: string;
     content: string;
 }
@@ -63,7 +63,7 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
             </div>
         </div>
     )
-    async function deleteTask(id: number){
+    async function deleteTask(id: string){
         await axios.delete(`http://localhost:3000/complete/${id}`)
     }
 }

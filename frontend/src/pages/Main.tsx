@@ -6,7 +6,7 @@ axios.defaults.withCredentials = true
 
 interface taskType{
     content: string
-    id: number;
+    id: string;
     done: boolean
 }
 
@@ -21,6 +21,7 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
     const [tasks, setTask] = useState<taskType[]>([])
     const [inputValue, setInputValue] = useState("")
     const [isChanging, setIsChanging] = useState(false)
+    const [newTaskValue, setnewTaskValue] = useState("")
     useEffect(() => {
       const fetchExpressData = async() => {
         const response = await axios.get("http://localhost:3000/data", {withCredentials: true})
@@ -59,7 +60,7 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
                 {tasks.map((task: taskType) => (
                     <div className="flex gap-3 items-center my-4">
                         <button onClick = {() => CompleteTask(task)}className="w-30 text-zinc-50 text-center bg-purple-600 rounded-md p-3 hover:cursor-pointer hover:brightness-90 hover:scale-105 transition-all font-bold ">Mark as Done</button>
-                        {isChanging === true &&  <input  defaultValue = {task.content} className="flex-1 text-zinc-50 bg-zinc-800 rounded-lg h-full p-5 text-2xl outline-0 focus-visible:ring-2 focus-visible:ring-violet-500"></input>}
+                        {isChanging === true &&  <input onBlur = {() => updateTask(newTaskValue, task.id)}onKeyDown={(e) => {if(e.key === "Enter") {updateTask(newTaskValue, task.id)}}} onChange={(e) => setnewTaskValue(e.target.value)} defaultValue = {task.content} className="flex-1 text-zinc-50 bg-zinc-800 rounded-lg h-full p-5 text-2xl outline-0 focus-visible:ring-2 focus-visible:ring-violet-500"></input>}
                         {isChanging === false && <div onClick={() => setIsChanging(true)} className="hover: cursor-text flex-1 text-zinc-50 bg-zinc-800 rounded-lg h-full p-5 text-2xl">{task.content}</div>}
                         <button onClick = {() => deleteTask(task)}className="w-30 text-slate-950 bg-red-600 p-5 text-2xl text-center font-bold rounded-md hover: cursor-pointer hover:brightness-90 hover:scale-105 transition-all  ">DELETE</button>
                     </div>
@@ -70,6 +71,10 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
 
     async function addTask(input: string){
         await axios.post("http://localhost:3000/data/", { content: input })
+    }
+
+    async function updateTask(taskContent: string, id: string){
+        await axios.put(`http://localhost:3000/update/${id}`, { content: taskContent})
     }
     async function deleteTask(task: taskType){
         await axios.delete(`http://localhost:3000/data/${task.id}`)
