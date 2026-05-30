@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { Left } from "../Components/Left";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -24,6 +24,15 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
 
         fetchExpressData()
     }, [])
+
+    useEffect(() => {
+        const fetchExpressData = async() => {
+            const response = await axios.get("http://localhost:3000/complete", {withCredentials: true})
+            setCompletedTasks(response.data)
+        }
+
+        fetchExpressData()
+    }, [completedTasks])
     return(
         <div className="fixed inset-0 z-50 flex items-center bg-black/70 backdrop-blur-sm gap-30">
             <Left
@@ -43,7 +52,7 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
                                     <Check className="text-green-500 font-bold"/>
                                     <span>{task.content}</span>
                                 </div>
-                                <button className="text-xl font-sans font-bold text-zinc-500 hover:cursor-pointer hover:text-zinc-300 transition-colors pr-1 leading-none">×</button>
+                                <button onClick = {() => deleteTask(task.id)}className="text-xl font-sans font-bold text-zinc-500 hover:cursor-pointer hover:text-zinc-300 transition-colors pr-1 leading-none"><X/></button>
                             </li>
                             ))}
                         
@@ -54,4 +63,7 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
             </div>
         </div>
     )
+    async function deleteTask(id: number){
+        await axios.delete(`http://localhost:3000/complete/${id}`)
+    }
 }

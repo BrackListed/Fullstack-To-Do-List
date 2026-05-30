@@ -37,7 +37,7 @@ app.post('/webhooks/clerk', express.raw({ type: 'application/json' }), async (re
 
 app.delete("/data/:id", async (req, res) => {
     await pool.query("DELETE FROM tasks WHERE id = $1", [req.params.id])
-    res.json({message: "Deleted"})
+    res.json({message: "Deleted the task"})
 })
 
 app.post("/complete/:id", async(req, res) => {
@@ -45,6 +45,7 @@ app.post("/complete/:id", async(req, res) => {
     const testUserId = await pool.query("SELECT user_id FROM tasks WHERE id = $1", [req.params.id])
     const task = identifier.rows[0] //selects the first row that has that identifier, since it's unique it selects that 1 row
     await pool.query("INSERT into completed_tasks(user_id, content) VALUES($1, $2)", [task.user_id, task.content ])
+    await pool.query("DELETE FROM tasks WHERE id = $1", [req.params.id])
     console.log(testUserId.rows[0]) 
     res.json([{message: "Tast marked as done!"}])
 })
@@ -54,6 +55,11 @@ app.get("/complete", async(req, res) => {
     const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [userId])
     const completedtask = await pool.query("SELECT * FROM completed_tasks WHERE user_id = $1", [id.rows[0].id]) //when adding a task it's automatically bound to user_id, this should work
     res.json(completedtask.rows)
+})
+
+app.delete("/complete/:id", async(req, res) => {
+    await pool.query("DELETE FROM completed_tasks WHERE id = $1", [req.params.id])
+    res.json({message: "Deleted the completed task"})
 })
 
 app.post("/data", async (req, res) => {
