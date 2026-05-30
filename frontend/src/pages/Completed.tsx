@@ -16,6 +16,7 @@ interface CompletedTasksType {
 
 export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
     const [completedTasks, setCompletedTasks] = useState<CompletedTasksType[]>([])
+    const [hasDeletedTask, sethasDeletedTask] = useState(false)
     useEffect(() => {
         const fetchExpressData = async() => {
             const response = await axios.get("http://localhost:3000/complete", {withCredentials: true})
@@ -33,8 +34,20 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
 
         fetchExpressData()
     }, [completedTasks])
+
+    useEffect(() => {
+        if(hasDeletedTask){
+            setTimeout(() => {
+                sethasDeletedTask(false)
+            }, 1000);
+        }
+    }, [hasDeletedTask])
     return(
         <div className="fixed inset-0 z-50 flex items-center bg-black/70 backdrop-blur-sm gap-30">
+            {hasDeletedTask && <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2.5 bg-rose-950/90 border border-rose-500/30 text-rose-400 px-4 py-3 rounded-xl shadow-xl backdrop-blur-sm animate-in fade-in slide-in-from-top-4 duration-200">
+                <span className="text-lg font-bold"><X/></span>
+                <span className="text-sm font-medium font-sans tracking-wide">Task deleted successfully!</span>
+            </div>}
             <Left
             setToggleSignIn={setToggleSignIn}
             setToggleSignUp={setToggleSignUp}
@@ -65,5 +78,6 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
     )
     async function deleteTask(id: string){
         await axios.delete(`http://localhost:3000/complete/${id}`)
+        sethasDeletedTask(true)
     }
 }
