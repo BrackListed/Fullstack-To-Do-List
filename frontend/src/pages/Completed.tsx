@@ -33,7 +33,7 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
     useEffect(() => {
         const fetchExpressData = async() => {
             const token = await getToken()
-            const response = await axios.get(`${API_URL}/complete`, {headers: {Authorization: `Bearer${token}` }, withCredentials: true})
+            const response = await axios.get(`${API_URL}/complete`, {headers: {Authorization: `Bearer ${token}` }, withCredentials: true})
             setCompletedTasks(response.data)
         }
 
