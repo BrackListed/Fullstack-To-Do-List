@@ -40,6 +40,21 @@ app.delete("/data/:id", async (req, res) => {
     res.json({message: "Deleted"})
 })
 
+app.post("/complete/:id", async(req, res) => {
+    const identifier = await pool.query("SELECT * FROM tasks WHERE id = $1", [req.params.id]) //select the entire row that has a matching id
+    const testUserId = await pool.query("SELECT user_id FROM tasks WHERE id = $1", [req.params.id])
+    const task = identifier.rows[0] //selects the first row that has that identifier, since it's unique it selects that 1 row
+    await pool.query("INSERT into completed_tasks(user_id, content) VALUES($1, $2)", [task.user_id, task.content ])
+    console.log(testUserId.rows[0]) 
+    res.json([{message: "Tast marked as done!"}])
+})
+
+app.get("/complete", async(req, res) => {
+    const {userId} = getAuth(req)
+    const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [userId])
+    const completedtask = await pool.query("SELECT * FROM completed_tasks WHERE user_id = $1", [id.rows[0].id]) //when adding a task it's automatically bound to user_id, this should work
+    res.json(completedtask.rows)
+})
 
 app.post("/data", async (req, res) => {
     const {userId} = (getAuth(req))
@@ -48,7 +63,7 @@ app.post("/data", async (req, res) => {
     console.log(userId)
     console.log(id.rows)
     if(userId){
-        
+
     }
     await pool.query("INSERT into tasks(user_id, content, completed) VALUES($1, $2, $3)", [id.rows[0].id,req.body.content, false])
     console.log(req.body)

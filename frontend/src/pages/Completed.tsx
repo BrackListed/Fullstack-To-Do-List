@@ -1,12 +1,29 @@
 import { Check } from "lucide-react";
 import { Left } from "../Components/Left";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 interface CompletedProps{
     setToggleSignIn: (value: boolean) => void
     setToggleSignUp: (value: boolean) => void
 }
 
+interface CompletedTasksType {
+    id: number;
+    userId: string;
+    content: string;
+}
+
 export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
+    const [completedTasks, setCompletedTasks] = useState<CompletedTasksType[]>([])
+    useEffect(() => {
+        const fetchExpressData = async() => {
+            const response = await axios.get("http://localhost:3000/complete", {withCredentials: true})
+            setCompletedTasks(response.data)
+        }
+
+        fetchExpressData()
+    }, [])
     return(
         <div className="fixed inset-0 z-50 flex items-center bg-black/70 backdrop-blur-sm gap-30">
             <Left
@@ -20,13 +37,15 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
                     </div>
                     <div className="w-full flex-1 my-4 border-2 border-dashed border-zinc-700 rounded-xl p-6 flex flex-col items-center justify-start gap-4 text-zinc-400 font-sans min-h-70">
                         <ul className="w-full flex flex-col gap-2.5">
+                            {completedTasks.map((task) => (
                             <li className="w-full bg-zinc-800/50 border border-zinc-800 rounded-lg p-3 text-sm text-zinc-300 flex items-center justify-between gap-3">
                                 <div className="flex items-center gap-3">
                                     <Check className="text-green-500 font-bold"/>
-                                    Set up website
+                                    <span>{task.content}</span>
                                 </div>
                                 <button className="text-xl font-sans font-bold text-zinc-500 hover:cursor-pointer hover:text-zinc-300 transition-colors pr-1 leading-none">×</button>
                             </li>
+                            ))}
                         
                         </ul>
                     </div>

@@ -16,6 +16,12 @@ export const tasks = pgTable("tasks", {
     completed: boolean("completed").notNull().default(false)
 })
 
+export const completedTasks = pgTable("completed_tasks", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id").references(() => users.id, {onDelete: "cascade"}),
+    content: text("content").notNull()
+})
+
 export const userTaskRelations = relations(users, ({many}) => ({
     tasks: many(tasks)
 }))
