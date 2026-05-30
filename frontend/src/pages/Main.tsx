@@ -32,7 +32,8 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
     const [hasUpdatedTask, setHasUpdatedTask] = useState(false)
     useEffect(() => {
       const fetchExpressData = async() => {
-        const response = await axios.get(`${API_URL}/data`, {withCredentials: true})
+        const token = await getToken()
+        const response = await axios.get(`${API_URL}/data`, { headers: { Authorization: `Bearer ${token}` }, withCredentials: true })
         setTask(response.data)
     }
       fetchExpressData()
@@ -40,7 +41,8 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
 
     useEffect(() => {
       const fetchExpressData = async() => {
-        const response = await axios.get(`${API_URL}/data`)
+        const token = await getToken()
+        const response = await axios.get(`${API_URL}/data`, { headers: { Authorization: `Bearer ${token}`}})
         setTask(response.data)
         setIsLoading(false)
       }
