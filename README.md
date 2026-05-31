@@ -6,3 +6,5 @@ A Simple To-Do List website that fully utilizes the PERN(Postgresql, express, re
 ![Task Page Preview](./frontend/public/Front_Page.png)
 ### 📷 Completed Tasks Page
 ![Completed Tasks Page Preview](./frontend/public/Completed_Tasks.png)
+### 📷 Journal page
+![Journal Page Preview](./frontend/public/Jourrnal_Page.png)
