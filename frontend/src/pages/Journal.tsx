@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Left } from "../Components/Left";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"
-import { PlusSquareIcon, X } from "lucide-react";
+import { Check, PlusSquareIcon, Rotate3D, X } from "lucide-react";
 import { useAuth } from "@clerk/react";
 import axios from "axios";
 import { API_URL } from "../api";
@@ -27,6 +27,9 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
     const {getToken} = useAuth()
     const [modifyEntry, setModifyEntry] = useState(false)
     const [newEntryValue, setNewEntryValue] = useState("")
+    const [hasAddedEntry, sethasAddedEntry] = useState(false)
+    const [hasDeletedEntry, sethasDeletedEntry] = useState(false)
+    const [hasUpdatedEntry, setHasUpdatedEntry] = useState(false)
     useEffect(() => {
         const fetchExpressData = async() => {
             const token = await getToken()
@@ -45,8 +48,45 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
         }
         fetchExpressData()
     }, [journal])
+    
+    useEffect(() => {
+        if(hasAddedEntry){
+            setTimeout(() => {
+                sethasAddedEntry(false)
+            }, 1000);
+        }
+    }, [hasAddedEntry])
+
+    useEffect(() => {
+        if(hasUpdatedEntry){
+            setTimeout(() => {
+                setHasUpdatedEntry(false)
+            }, 1000);
+        }
+    }, [hasUpdatedEntry])
+
+    useEffect(() => {
+        if(hasDeletedEntry){
+            setTimeout(() => {
+                sethasDeletedEntry(false)
+            }, 1000);
+        }
+    }, [hasDeletedEntry])
+
     return (
         <div className="w-screen h-screen flex-1 flex">
+            {hasAddedEntry && <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2.5 bg-emerald-950/90 border border-emerald-500/30 text-emerald-400 px-4 py-3 rounded-xl shadow-xl backdrop-blur-sm animate-in fade-in slide-in-from-top-4 duration-200">
+                <span className="text-lg font-bold"><Check/></span>
+                <span className="text-sm font-medium font-sans tracking-wide">Task added successfully!</span>
+            </div>}
+            {hasUpdatedEntry && <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2.5 bg-blue-950/90 border border-blue-500/30 text-blue-400 px-4 py-3 rounded-xl shadow-xl backdrop-blur-sm animate-in fade-in slide-in-from-top-4 duration-200">
+                <span className="text-lg font-bold"><Rotate3D/></span>
+                <span className="text-sm font-medium font-sans tracking-wide">Task updated!</span>
+            </div>}
+            {hasDeletedEntry && <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2.5 bg-rose-950/90 border border-rose-500/30 text-rose-400 px-4 py-3 rounded-xl shadow-xl backdrop-blur-sm animate-in fade-in slide-in-from-top-4 duration-200">
+                <span className="text-lg font-bold"><X/></span>
+                <span className="text-sm font-medium font-sans tracking-wide">Task deleted successfully!</span>
+            </div>}
             <Left setToggleSignIn={setToggleSignIn}
             setToggleSignUp={setToggleSignUp}
             />
@@ -73,11 +113,10 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
                     {journal.map((entry) => (
                     <div className="text-2xl flex justify-between w-full">
                         {(selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()) &&<div className="justify-between w-full flex">
-                            {modifyEntry === false && <span className="flex justify-between w-full" onClick={() => setModifyEntry(true)}><span>{entry.content}</span> <span className="px-5 text-sm text-gray-400 italic flex items-center">{new Date(entry.date_created).toLocaleTimeString()}</span></span>}
+                            {modifyEntry === false && <span className="flex justify-between w-full" onClick={() => {setModifyEntry(true); setNewEntryValue(entry.content)}}><span>{entry.content}</span> <span className="px-5 text-sm text-gray-400 italic flex items-center">{new Date(entry.date_created).toLocaleTimeString()}</span></span>}
                             {modifyEntry && <input onChange={(e) => setNewEntryValue(e.target.value)} onKeyDown={(e) => {if(e.key === "Enter"){
                                 updateEntry(newEntryValue, entry.id)
-                                setModifyEntry(false)
-                            }}} onBlur={() => {updateEntry(newEntryValue, entry.id); setModifyEntry(false)}} defaultValue={entry.content} className="w-full bg-zinc-800/20 border border-blue-500 rounded-lg p-2 text-2xl text-zinc-100 font-sans focus:outline-none shadow-[0_0_10px_rgba(59,130,246,0.2)]"></input>}
+                            }}} onBlur={() => {updateEntry(newEntryValue, entry.id)}} defaultValue={entry.content} className="w-full bg-zinc-800/20 border border-blue-500 rounded-lg p-2 text-2xl text-zinc-100 font-sans focus:outline-none shadow-[0_0_10px_rgba(59,130,246,0.2)]"></input>}
                             <button onClick={() => deleteEntry(entry.id)} className="hover:bg-zinc-700 rounded-lg hover:cursor-pointer hover:p-1 transition-all"><X/></button>
                         </div>}
                     </div>
@@ -88,17 +127,21 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
     )
 
     async function addEntry(content: string, selectedDate: Date){
+        sethasAddedEntry(true)
         const token = await getToken()
         await axios.post(`${API_URL}/journal/${selectedDate.toISOString()}`, {content: content}, {headers: {Authorization: `Bearer ${token}`}})
     }
 
     async function deleteEntry(id: string){
+        sethasDeletedEntry(true)
         const token = await getToken()
         await axios.delete(`${API_URL}/journal/${id}`, {headers: {Authorization: `Bearer ${token}`}})
     }
 
     async function updateEntry(content: string, id: string){
+        setHasUpdatedEntry(true)
         const token = await getToken()
         await axios.put(`${API_URL}/journal/${id}`, {content: content}, {headers: {Authorization: `Bearer ${token}`}})
+        setModifyEntry(false)
     }
 }
