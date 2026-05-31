@@ -8,7 +8,7 @@ import { verifyWebhook } from '@clerk/express/webhooks'
 
 //npx nodemon --exec ts-node index.ts
 const app = express()
-app.use(cors({origin: process.env.FRONTEND_URL || "http://localhost:5173", credentials: true}))
+app.use(cors({origin: ["https://fullstack-to-do-list-ebon.vercel.app", "http://localhost:5173"], credentials: true}))
 app.use(clerkMiddleware())
 const pool = new Pool({ connectionString: process.env.DATABASE_URL})
 const db = drizzle(process.env.DATABASE_URL!);
@@ -74,6 +74,7 @@ app.post("/data", async (req, res) => {
     console.log(userId)
     console.log(id.rows)
     if(userId){
+
 
     }
     await pool.query("INSERT into tasks(user_id, content, completed) VALUES($1, $2, $3)", [id.rows[0].id,req.body.content, false])

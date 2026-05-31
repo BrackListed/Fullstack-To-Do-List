@@ -19,7 +19,8 @@ export const tasks = pgTable("tasks", {
 export const completedTasks = pgTable("completed_tasks", {
     id: uuid("id").defaultRandom().primaryKey(),
     userId: uuid("user_id").references(() => users.id, {onDelete: "cascade"}),
-    content: text("content").notNull()
+    content: text("content").notNull(),
+    dateCompleted: timestamp("date_completed", {withTimezone: true}).defaultNow().notNull()
 })
 
 export const userTaskRelations = relations(users, ({many}) => ({

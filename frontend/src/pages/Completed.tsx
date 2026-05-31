@@ -14,6 +14,7 @@ interface CompletedTasksType {
     id: string;
     userId: string;
     content: string;
+    date_completed: string;
 }
 
 export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
@@ -66,11 +67,11 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
                         {completedTasks.length <= 0 && <span className="text-sm font-medium text-zinc-600 font-sans tracking-wide select-none">No tasks completed yet!</span>}
                         {completedTasks && <ul className="w-full flex flex-col gap-2.5">
                             {completedTasks.map((task) => (
-                            <li className="w-full bg-zinc-800/50 border border-zinc-800 rounded-lg p-3 text-sm text-zinc-300 flex items-center justify-between gap-3">
-                                <div className="flex items-center gap-3">
+                            <li className="w-full flex-1 bg-zinc-800/50 border border-zinc-800 rounded-lg p-3 text-sm text-zinc-300 flex items-center justify-between gap-3">
                                     <Check className="text-green-500 font-bold"/>
-                                    <span>{task.content}</span>
-                                </div>
+                                    <div className="flex w-full justify-between"><span>{task.content}</span>
+                                        <span className="text-sm text-gray-400 italic">{new Date(task.date_completed).toLocaleString()}</span>
+                                    </div>
                                 <button onClick = {() => deleteTask(task.id)}className="text-xl font-sans font-bold text-zinc-500 hover:cursor-pointer hover:text-zinc-300 transition-colors pr-1 leading-none"><X/></button>
                             </li>
                             ))}
