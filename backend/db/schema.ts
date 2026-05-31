@@ -16,12 +16,27 @@ export const tasks = pgTable("tasks", {
     completed: boolean("completed").notNull().default(false)
 })
 
+export const journal = pgTable("journal", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id").references(() => users.id, {onDelete: "cascade"}),
+    content: text("content").notNull(),
+    date_created: timestamp("date_created", {withTimezone: true}).defaultNow().notNull()
+})
+
 export const completedTasks = pgTable("completed_tasks", {
     id: uuid("id").defaultRandom().primaryKey(),
     userId: uuid("user_id").references(() => users.id, {onDelete: "cascade"}),
     content: text("content").notNull(),
-    dateCompleted: timestamp("date_completed", {withTimezone: true}).defaultNow().notNull()
+    dateCompleted: timestamp("date_completed", {withTimezone: true}).notNull()
 })
+
+export const userJournalRelations = relations(users, ({many}) => ({
+    journal: many(journal)
+}))
+
+export const journalUserRelations = relations(journal, ({one}) => ({
+    user: one(users, {fields: [journal.userId], references: [users.id]})
+}))
 
 export const userTaskRelations = relations(users, ({many}) => ({
     tasks: many(tasks)

@@ -67,6 +67,20 @@ app.put("/update/:id", async(req, res) => {
     res.json({message: "Tasks updated successfully!"})
 })
 
+app.post("/journal/:date", async(req, res) => {
+    const {userId} = getAuth(req)
+    const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [userId])
+    await pool.query("INSERT INTO journal(user_id, content, date_created) VALUES($1, $2, $3)", [id.rows[0].id ,req.body.content, req.params.date])
+    res.json({message: "Entry added!"})
+})
+
+app.get("/journal", async(req, res) => {
+    const {userId} = getAuth(req)
+    const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [userId])
+    const journalEntry = await pool.query("SELECT * FROM journal WHERE user_id = $1", [id.rows[0].id]) 
+    res.json(journalEntry.rows)
+})
+
 app.post("/data", async (req, res) => {
     const {userId} = (getAuth(req))
     //you're the user, this thing will find your id by checking which clerkuserid you have right now
