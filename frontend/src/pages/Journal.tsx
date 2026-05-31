@@ -60,11 +60,8 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
                             selected={selectedDate}
                             onChange={(date: Date | null) => setSelectedDate(date)}/>
                         </div>
-                        {journal.map((entry) => (
-                            <div>
-                                {(selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()) &&<span>{new Date(entry.date_created).toLocaleTimeString()}</span>}
-                            </div>
-                        ))}
+                        <span>Number of Entries: {journal.filter(entry => selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()).length}</span>
+                        
                     </div>
                     <div className="my-10 flex flex-col">
                         <div onClick={() => setAddingEntry(true)} className="flex gap-3 text-2xl hover:curosr-pointer hover:p-2 hover:scale-105 transition-all hover:cursor-pointer hover:bg-zinc-800 w-fit rounded-2xl"><PlusSquareIcon size={32}/>Add Journal Entry</div>
@@ -76,7 +73,7 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
                     {journal.map((entry) => (
                     <div className="text-2xl flex justify-between w-full">
                         {(selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()) &&<div className="justify-between w-full flex">
-                            {modifyEntry === false && <span onClick={() => setModifyEntry(true)}>{entry.content}</span>}
+                            {modifyEntry === false && <span className="flex justify-between w-full" onClick={() => setModifyEntry(true)}><span>{entry.content}</span> <span className="px-5 text-sm text-gray-400 italic flex items-center">{new Date(entry.date_created).toLocaleTimeString()}</span></span>}
                             {modifyEntry && <input onChange={(e) => setNewEntryValue(e.target.value)} onKeyDown={(e) => {if(e.key === "Enter"){
                                 updateEntry(newEntryValue, entry.id)
                                 setModifyEntry(false)
