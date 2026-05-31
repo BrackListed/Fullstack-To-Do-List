@@ -25,7 +25,8 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
     const [entryContent, setEntryContent] = useState("")
     const [journal, setJournal] = useState<JournalType[]>([])
     const {getToken} = useAuth()
-
+    const [modifyEntry, setModifyEntry] = useState(false)
+    const [newEntryValue, setNewEntryValue] = useState("")
     useEffect(() => {
         const fetchExpressData = async() => {
             const token = await getToken()
@@ -75,12 +76,15 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
                     {journal.map((entry) => (
                     <div className="text-2xl flex justify-between w-full">
                         {(selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()) &&<div className="justify-between w-full flex">
-                            <span>{entry.content}</span>
+                            {modifyEntry === false && <span onClick={() => setModifyEntry(true)}>{entry.content}</span>}
+                            {modifyEntry && <input onChange={(e) => setNewEntryValue(e.target.value)} onKeyDown={(e) => {if(e.key === "Enter"){
+                                updateEntry(newEntryValue, entry.id)
+                                setModifyEntry(false)
+                            }}} onBlur={() => {updateEntry(newEntryValue, entry.id); setModifyEntry(false)}} defaultValue={entry.content} className="w-full bg-zinc-800/20 border border-blue-500 rounded-lg p-2 text-2xl text-zinc-100 font-sans focus:outline-none shadow-[0_0_10px_rgba(59,130,246,0.2)]"></input>}
                             <button onClick={() => deleteEntry(entry.id)} className="hover:bg-zinc-700 rounded-lg hover:cursor-pointer hover:p-1 transition-all"><X/></button>
                         </div>}
                     </div>
                     ))}
-                    {/* retriev data and only render those that match selected id maybe use a filter */}
                 </div> 
             </div>
         </div>
@@ -94,5 +98,10 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
     async function deleteEntry(id: string){
         const token = await getToken()
         await axios.delete(`${API_URL}/journal/${id}`, {headers: {Authorization: `Bearer ${token}`}})
+    }
+
+    async function updateEntry(content: string, id: string){
+        const token = await getToken()
+        await axios.put(`${API_URL}/journal/${id}`, {content: content}, {headers: {Authorization: `Bearer ${token}`}})
     }
 }

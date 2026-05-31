@@ -67,6 +67,11 @@ app.put("/update/:id", async(req, res) => {
     res.json({message: "Tasks updated successfully!"})
 })
 
+app.put("/journal/:id",  async(req, res) => {
+    await pool.query("UPDATE journal SET content = $1 WHERE id = $2", [req.body.content, req.params.id])
+    res.json({message: "Journal entry updated successfully!"})
+})
+
 app.post("/journal/:date", async(req, res) => {
     const {userId} = getAuth(req)
     const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [userId])
