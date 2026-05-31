@@ -61,7 +61,7 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
                         </div>
                         {journal.map((entry) => (
                             <div>
-                                {(selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()) &&<span>{entry.date_created}</span>}
+                                {(selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()) &&<span>{new Date(entry.date_created).toLocaleTimeString()}</span>}
                             </div>
                         ))}
                     </div>
