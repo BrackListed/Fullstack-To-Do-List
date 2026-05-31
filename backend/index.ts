@@ -81,6 +81,11 @@ app.get("/journal", async(req, res) => {
     res.json(journalEntry.rows)
 })
 
+app.delete("/journal/:id", async(req, res) => {
+    await pool.query("DELETE FROM journal WHERE id = $1", [req.params.id])
+    res.json({message: "Entry deleted successfully"})
+})
+
 app.post("/data", async (req, res) => {
     const {userId} = (getAuth(req))
     //you're the user, this thing will find your id by checking which clerkuserid you have right now

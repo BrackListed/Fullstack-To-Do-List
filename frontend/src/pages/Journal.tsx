@@ -74,9 +74,9 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
                     </div>
                     {journal.map((entry) => (
                     <div className="text-2xl flex justify-between w-full">
-                        {(selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()) &&<div>
+                        {(selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()) &&<div className="justify-between w-full flex">
                             <span>{entry.content}</span>
-                            <button><X/></button>
+                            <button onClick={() => deleteEntry(entry.id)} className="hover:bg-zinc-700 rounded-lg hover:cursor-pointer hover:p-1 transition-all"><X/></button>
                         </div>}
                     </div>
                     ))}
@@ -89,5 +89,10 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
     async function addEntry(content: string, selectedDate: Date){
         const token = await getToken()
         await axios.post(`${API_URL}/journal/${selectedDate.toISOString()}`, {content: content}, {headers: {Authorization: `Bearer ${token}`}})
+    }
+
+    async function deleteEntry(id: string){
+        const token = await getToken()
+        await axios.delete(`${API_URL}/journal/${id}`, {headers: {Authorization: `Bearer ${token}`}})
     }
 }
