@@ -31,6 +31,9 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
     const [hasDeletedTask, sethasDeletedTask] = useState(false)
     const [hasUpdatedTask, setHasUpdatedTask] = useState(false)
     const [targetTask, setTargetTask] = useState<taskType>()
+    const [page, setPage]  = useState(1)
+    const totalPages = Math.ceil(tasks.length / 5)
+    const visibleTasks = tasks.slice((page - 1) * 5, (page * 5))
     useEffect(() => {
       const fetchExpressData = async() => {
         const token = await getToken()
@@ -98,7 +101,7 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
                 <SignUp/>
               </div>}
           </div>}
-            <div className="bg-zinc-600 w-10/12 min-h-11/12 h-fit rounded-lg p-3 gap-3 text-zinc-50 font-sans my-4">
+            <div className="relative pb-24 bg-zinc-600 w-10/12 min-h-11/12 h-fit rounded-lg p-3 gap-3 text-zinc-50 font-sans my-4">
             <div className="flex gap-3 w-full">
                 <input value = {inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Insert task here..." className="flex-1 bg-zinc-800 w-full p-3 rounded-md min-h-10 max-h-fit focus-visible:ring-2 focus-visible:ring-violet-500 outline-none focus:scale-100.5 transition-all"></input>
                 {inputValue && <button onClick = {async () => {await addTask(inputValue); setInputValue("")}}className="w-27 bg-purple-600 rounded-lg hover:brightness-90 p-3 font-bold hover: cursor-pointer hover:scale-105 transition-all ">ADD TASK</button>}
@@ -108,7 +111,7 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
                 <div className="w-6 h-6 border-2 border-zinc-500 border-t-zinc-200 rounded-full animate-spin"></div>
                 <span className="text-sm font-medium text-zinc-400 font-sans tracking-wide animate-pulse select-none">Loading your tasks...</span>
             </div>}
-                {tasks.map((task: taskType) => (
+                {visibleTasks.map((task: taskType) => (
                     <div className="flex gap-3 items-center my-4">
                         <button onClick = {() => CompleteTask(task)}className="w-30 text-zinc-50 text-center bg-purple-600 rounded-md p-3 hover:cursor-pointer hover:brightness-90 hover:scale-105 transition-all font-bold ">Mark as Done</button>
                         {(isChanging === true && task.id === targetTask!.id) &&  <input onBlur = {() => {setIsChanging(false);if (newTaskValue.trim() !== "" && newTaskValue !== task.content) {updateTask(newTaskValue, task.id)}}}onKeyDown={(e) => {if(e.key === "Enter") {{setIsChanging(false);if(newTaskValue.trim() !== "" && newTaskValue !== task.content){updateTask(newTaskValue, task.id)}}}}} onChange={(e) => setnewTaskValue(e.target.value)} defaultValue = {task.content} className="flex-1 text-zinc-50 bg-zinc-800 rounded-lg h-full p-5 text-2xl outline-0 focus-visible:ring-2 focus-visible:ring-violet-500"></input>}
@@ -116,6 +119,11 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
                         <button onClick = {() => deleteTask(task)}className="w-30 text-slate-950 bg-red-600 p-5 text-2xl text-center font-bold rounded-md hover: cursor-pointer hover:brightness-90 hover:scale-105 transition-all  ">DELETE</button>
                     </div>
                 ))}
+                <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-3 select-none">
+                    <button disabled={page === 1} onClick={() => setPage((p) => p - 1)} className="px-4 py-2 text-xs font-semibold text-zinc-400 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 hover:text-zinc-200 rounded-lg transition-all duration-150 active:scale-95 hover:cursor-pointer">Prev</button>
+                    <span className="text-zinc-400 text-sm font-medium">{page} / {totalPages}</span>
+                    <button disabled={page === totalPages} onClick={() => setPage((p) => p + 1)} className="px-4 py-2 text-xs font-semibold text-zinc-400 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 hover:text-zinc-200 rounded-lg transition-all duration-150 active:scale-95 hover:cursor-pointer">Next</button>
+                </div>
             </div>
         </div>
     )

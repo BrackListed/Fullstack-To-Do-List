@@ -31,6 +31,9 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
     const [hasDeletedEntry, sethasDeletedEntry] = useState(false)
     const [hasUpdatedEntry, setHasUpdatedEntry] = useState(false)
     const [targetEntry, setTargetEntry] = useState<JournalType>()
+    const [page, setPage] = useState(1)
+    const totalPages = Math.ceil(journal.length / 5)
+    const visibleItems = journal.slice((page - 1) * 5, (page * 5)) 
     useEffect(() => {
         const fetchExpressData = async() => {
             const token = await getToken()
@@ -92,7 +95,7 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
             setToggleSignUp={setToggleSignUp}
             />
             <div className="flex-1 flex items-center justify-center w-full h-full text-zinc-50">
-                <div className="min-w-4xl max-w-fit h-10/12 bg-zinc-900 border flex flex-col border-zinc-800 rounded-2xl p-8 shadow-2xl font-sans">
+                <div className="w-4xl h-10/12 bg-zinc-900 border flex flex-col  border-zinc-800 rounded-2xl p-8 pb-24 shadow-2xl font-sans relative">
                     <div className="flex text-2xl border-b-2 border-zinc-700 py-5 justify-between">
                         <div className="flex gap-3 ">
                             <span>📅</span>
@@ -104,16 +107,15 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
                         <span>Number of Entries: {journal.filter(entry => selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()).length}</span>
                         
                     </div>
-                    <div className="my-10 flex flex-col">
+                    <div className="my-5 flex flex-col">
                         <div onClick={() => setAddingEntry(true)} className="flex gap-3 text-2xl hover:curosr-pointer hover:p-2 hover:scale-105 transition-all hover:cursor-pointer hover:bg-zinc-800 w-fit rounded-2xl"><PlusSquareIcon size={32}/>Add Journal Entry</div>
                         {addingEntry && <input onChange={(e) => setEntryContent(e.target.value)} onBlur={() => setAddingEntry(false)} onKeyDown = {(e) => {if(e.key === "Enter"){
                             addEntry(entryContent, selectedDate!)
                             setAddingEntry(false)}}} className="bg-zinc-800 focus-visible:ring-2 focus-visible:ring-violet-700 rounded-lg outline-none my-5 p-3 text-2xl"></input>}
                             {journal.filter(entry => selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()).length === 0 && <span className="w-full text-center my-5 text-2xl italic text-gray-500">No journal entry for {selectedDate?.toLocaleDateString()}, add one to get started!</span>}
                     </div>
-                    {journal.map((entry) => (
-                        //wehn this mapped out say entry 1, if i say only trigger input if the entry you selected matches the entry here
-                    <div className="text-2xl flex justify-between w-full">
+                    {visibleItems.map((entry) => (
+                    <div className="text-2xl flex my-2 justify-between w-full">
                         {(selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()) &&<div className="justify-between w-full flex">
                             {(modifyEntry === true && entry.id === targetEntry!.id) && <input onKeyDown={(e) => {if(e.key === "Enter"){{setModifyEntry(false);if(newEntryValue.trim() !== "" && newEntryValue !== entry.content){updateEntry(newEntryValue, entry.id)}}}}} onBlur={() => {setModifyEntry(false);if(newEntryValue.trim() !== "" && newEntryValue !== entry.content){{updateEntry(newEntryValue, entry.id)}}}} onChange={(e) => setNewEntryValue(e.target.value)} defaultValue={entry.content} className="w-full bg-zinc-800/20 border border-blue-500 rounded-lg p-2 text-2xl text-zinc-100 font-sans focus:outline-none shadow-[0_0_10px_rgba(59,130,246,0.2)]"></input>}
                             {modifyEntry === false && <span className="flex justify-between w-full" onClick={() => {setModifyEntry(true); setTargetEntry(entry)}}><span>{entry.content}</span> <span className="px-5 text-sm text-gray-400 italic flex items-center">{new Date(entry.date_created).toLocaleTimeString()}</span></span>}
@@ -121,6 +123,11 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
                         </div>}
                     </div>
                     ))}
+                    <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-3">
+                        <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="px-4 py-2 text-xs font-semibold text-zinc-400 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 hover:text-zinc-200 rounded-lg transition-all duration-150 active:scale-95 hover:cursor-pointer">Prev</button>
+                        <span className="text-zinc-400 text-sm font-medium">{page} / {totalPages}</span>
+                        <button disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)} className="px-4 py-2 text-xs font-semibold text-zinc-400 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 hover:text-zinc-200 rounded-lg transition-all duration-150 active:scale-95 hover:cursor-pointer">Next</button>
+                    </div>
                 </div> 
             </div>
         </div>
