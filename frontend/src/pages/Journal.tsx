@@ -30,6 +30,7 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
     const [hasAddedEntry, sethasAddedEntry] = useState(false)
     const [hasDeletedEntry, sethasDeletedEntry] = useState(false)
     const [hasUpdatedEntry, setHasUpdatedEntry] = useState(false)
+    const [targetEntry, setTargetEntry] = useState<JournalType>()
     useEffect(() => {
         const fetchExpressData = async() => {
             const token = await getToken()
@@ -111,12 +112,11 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
                             {journal.filter(entry => selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()).length === 0 && <span className="w-full text-center my-5 text-2xl italic text-gray-500">No journal entry for {selectedDate?.toLocaleDateString()}, add one to get started!</span>}
                     </div>
                     {journal.map((entry) => (
+                        //wehn this mapped out say entry 1, if i say only trigger input if the entry you selected matches the entry here
                     <div className="text-2xl flex justify-between w-full">
                         {(selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()) &&<div className="justify-between w-full flex">
-                            {modifyEntry === false && <span className="flex justify-between w-full" onClick={() => {setModifyEntry(true); setNewEntryValue(entry.content)}}><span>{entry.content}</span> <span className="px-5 text-sm text-gray-400 italic flex items-center">{new Date(entry.date_created).toLocaleTimeString()}</span></span>}
-                            {modifyEntry && <input onChange={(e) => setNewEntryValue(e.target.value)} onKeyDown={(e) => {if(e.key === "Enter"){
-                                updateEntry(newEntryValue, entry.id)
-                            }}} onBlur={() => {updateEntry(newEntryValue, entry.id)}} defaultValue={entry.content} className="w-full bg-zinc-800/20 border border-blue-500 rounded-lg p-2 text-2xl text-zinc-100 font-sans focus:outline-none shadow-[0_0_10px_rgba(59,130,246,0.2)]"></input>}
+                            {(modifyEntry === true && entry.id === targetEntry!.id) && <input onKeyDown={(e) => {if(e.key === "Enter"){{setModifyEntry(false);if(newEntryValue.trim() !== "" && newEntryValue !== entry.content){updateEntry(newEntryValue, entry.id)}}}}} onBlur={() => {setModifyEntry(false);if(newEntryValue.trim() !== "" && newEntryValue !== entry.content){{updateEntry(newEntryValue, entry.id)}}}} onChange={(e) => setNewEntryValue(e.target.value)} defaultValue={entry.content} className="w-full bg-zinc-800/20 border border-blue-500 rounded-lg p-2 text-2xl text-zinc-100 font-sans focus:outline-none shadow-[0_0_10px_rgba(59,130,246,0.2)]"></input>}
+                            {modifyEntry === false && <span className="flex justify-between w-full" onClick={() => {setModifyEntry(true); setTargetEntry(entry)}}><span>{entry.content}</span> <span className="px-5 text-sm text-gray-400 italic flex items-center">{new Date(entry.date_created).toLocaleTimeString()}</span></span>}
                             <button onClick={() => deleteEntry(entry.id)} className="hover:bg-zinc-700 rounded-lg hover:cursor-pointer hover:p-1 transition-all"><X/></button>
                         </div>}
                     </div>
@@ -142,6 +142,5 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
         setHasUpdatedEntry(true)
         const token = await getToken()
         await axios.put(`${API_URL}/journal/${id}`, {content: content}, {headers: {Authorization: `Bearer ${token}`}})
-        setModifyEntry(false)
     }
 }

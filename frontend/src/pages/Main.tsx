@@ -30,6 +30,7 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
     const [hasAddedTask, sethasAddedTask] = useState(false)
     const [hasDeletedTask, sethasDeletedTask] = useState(false)
     const [hasUpdatedTask, setHasUpdatedTask] = useState(false)
+    const [targetTask, setTargetTask] = useState<taskType>()
     useEffect(() => {
       const fetchExpressData = async() => {
         const token = await getToken()
@@ -110,8 +111,8 @@ export function Main({toggleSignIn, toggleSignUp, setToggleSignIn, setToggleSign
                 {tasks.map((task: taskType) => (
                     <div className="flex gap-3 items-center my-4">
                         <button onClick = {() => CompleteTask(task)}className="w-30 text-zinc-50 text-center bg-purple-600 rounded-md p-3 hover:cursor-pointer hover:brightness-90 hover:scale-105 transition-all font-bold ">Mark as Done</button>
-                        {isChanging === true &&  <input onBlur = {() => updateTask(newTaskValue, task.id)}onKeyDown={(e) => {if(e.key === "Enter") {updateTask(newTaskValue, task.id)}}} onChange={(e) => setnewTaskValue(e.target.value)} defaultValue = {task.content} className="flex-1 text-zinc-50 bg-zinc-800 rounded-lg h-full p-5 text-2xl outline-0 focus-visible:ring-2 focus-visible:ring-violet-500"></input>}
-                        {isChanging === false && <div onClick={() => setIsChanging(true)} className="hover: cursor-text flex-1 text-zinc-50 bg-zinc-800 rounded-lg h-full p-5 text-2xl">{task.content}</div>}
+                        {(isChanging === true && task.id === targetTask!.id) &&  <input onBlur = {() => {setIsChanging(false);if (newTaskValue.trim() !== "" && newTaskValue !== task.content) {updateTask(newTaskValue, task.id)}}}onKeyDown={(e) => {if(e.key === "Enter") {{setIsChanging(false);if(newTaskValue.trim() !== "" && newTaskValue !== task.content){updateTask(newTaskValue, task.id)}}}}} onChange={(e) => setnewTaskValue(e.target.value)} defaultValue = {task.content} className="flex-1 text-zinc-50 bg-zinc-800 rounded-lg h-full p-5 text-2xl outline-0 focus-visible:ring-2 focus-visible:ring-violet-500"></input>}
+                        {isChanging === false && <div onClick={() => {setIsChanging(true); setTargetTask(task) }} className="hover: cursor-text flex-1 text-zinc-50 bg-zinc-800 rounded-lg h-full p-5 text-2xl">{task.content}</div>}
                         <button onClick = {() => deleteTask(task)}className="w-30 text-slate-950 bg-red-600 p-5 text-2xl text-center font-bold rounded-md hover: cursor-pointer hover:brightness-90 hover:scale-105 transition-all  ">DELETE</button>
                     </div>
                 ))}
