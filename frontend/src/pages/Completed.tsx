@@ -81,9 +81,9 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
                         </ul>}
                     </div>
                     <div className="flex gap-3 w-full justify-center items-center">
-                        <button onClick={() => setPage(p => p - 1)} disabled={page === 1} className="px-4 py-2 text-xs font-sans font-semibold text-zinc-400 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 hover:text-zinc-200 rounded-lg transition-all duration-150 active:scale-95 hover:cursor-pointer">Prev</button>
+                        <button onClick={() => setPage(p => p - 1)} disabled={page <= 1} className="px-4 py-2 text-xs font-sans font-semibold text-zinc-400 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 hover:text-zinc-200 rounded-lg transition-all duration-150 active:scale-95 hover:cursor-pointer">Prev</button>
                         <span className="text-gray-400 text-sm">{page} / {totalPages}</span>
-                        <button onClick={() => setPage(p => p + 1) } disabled={page === totalPages} className="px-4 py-2 text-xs font-sans font-semibold text-zinc-400 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 hover:text-zinc-200 rounded-lg transition-all duration-150 active:scale-95 hover:cursor-pointer">Next</button>
+                        <button onClick={() => setPage(p => p + 1) } disabled={page >= totalPages} className="px-4 py-2 text-xs font-sans font-semibold text-zinc-400 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 hover:text-zinc-200 rounded-lg transition-all duration-150 active:scale-95 hover:cursor-pointer">Next</button>
                     </div>
                 </div>
             </div>

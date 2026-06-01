@@ -32,8 +32,10 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
     const [hasUpdatedEntry, setHasUpdatedEntry] = useState(false)
     const [targetEntry, setTargetEntry] = useState<JournalType>()
     const [page, setPage] = useState(1)
-    const totalPages = Math.ceil(journal.length / 5)
-    const visibleItems = journal.slice((page - 1) * 5, (page * 5)) 
+    const totalPages = Math.ceil(journal.filter((j) => new Date(j.date_created).toLocaleDateString() === selectedDate?.toLocaleDateString()).length / 5) 
+    //the above starts the array at 0, 
+    //make it so that it only counts the ones whose date matches.
+    const visibleItems = (journal.filter((j) => new Date(j.date_created).toLocaleDateString() === selectedDate?.toLocaleDateString())).slice((page - 1) * 5, (page * 5)) 
     useEffect(() => {
         const fetchExpressData = async() => {
             const token = await getToken()
