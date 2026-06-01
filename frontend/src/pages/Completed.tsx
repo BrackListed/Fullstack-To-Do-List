@@ -17,9 +17,13 @@ interface CompletedTasksType {
     date_completed: string;
 }
 
+
 export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
     const [completedTasks, setCompletedTasks] = useState<CompletedTasksType[]>([])
     const [hasDeletedTask, sethasDeletedTask] = useState(false)
+    const [page, setPage] = useState(1)
+    const totalPages = Math.ceil(completedTasks.length / 5)
+    const visibleItems = completedTasks.slice((page - 1) * 5, (page * 5)) //starts at what page you are, 2nd page 
     const { getToken } = useAuth()
     useEffect(() => {
         const fetchExpressData = async() => {
@@ -27,7 +31,6 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
             const response = await axios.get(`${API_URL}/complete`, { headers: { Authorization: `Bearer ${token}` }, withCredentials: true })
             setCompletedTasks(response.data)
         }
-
         fetchExpressData()
     }, [])
 
@@ -66,7 +69,7 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
                     <div className="w-full flex-1 my-4 border-2 border-dashed border-zinc-700 rounded-xl p-6 flex flex-col items-center justify-start gap-4 text-zinc-400 font-sans min-h-70">
                         {completedTasks.length <= 0 && <span className="text-sm font-medium text-zinc-600 font-sans tracking-wide select-none">No tasks completed yet!</span>}
                         {completedTasks && <ul className="w-full flex flex-col gap-2.5">
-                            {completedTasks.map((task) => (
+                            {visibleItems.map((task) => (
                             <li className="w-full flex-1 bg-zinc-800/50 border border-zinc-800 rounded-lg p-3 text-sm text-zinc-300 flex items-center justify-between gap-3">
                                     <Check className="text-green-500 font-bold"/>
                                     <div className="flex w-full justify-between"><span>{task.content}</span>
@@ -77,7 +80,11 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
                             ))}
                         </ul>}
                     </div>
-                    <span className="text-center text-xs text-zinc-600 font-sans">End of Completed Tasks</span>
+                    <div className="flex gap-3 w-full justify-center items-center">
+                        <button onClick={() => setPage(p => p - 1)} disabled={page === 1} className="px-4 py-2 text-xs font-sans font-semibold text-zinc-400 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 hover:text-zinc-200 rounded-lg transition-all duration-150 active:scale-95 hover:cursor-pointer">Prev</button>
+                        <span className="text-gray-400 text-sm">{page} / {totalPages}</span>
+                        <button onClick={() => setPage(p => p + 1) } disabled={page === totalPages} className="px-4 py-2 text-xs font-sans font-semibold text-zinc-400 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 hover:text-zinc-200 rounded-lg transition-all duration-150 active:scale-95 hover:cursor-pointer">Next</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -87,4 +94,5 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
         await axios.delete(`${API_URL}/complete/${id}`, { headers: { Authorization: `Bearer ${token}`}})
         sethasDeletedTask(true)
     }
+
 }
