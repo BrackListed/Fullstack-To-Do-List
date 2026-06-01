@@ -1,4 +1,4 @@
-import { Check, X } from "lucide-react";
+import { Check, Search, X } from "lucide-react";
 import { Left } from "../Components/Left";
 import { useEffect, useState } from "react";
 import { API_URL } from "../api"
@@ -22,8 +22,10 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
     const [completedTasks, setCompletedTasks] = useState<CompletedTasksType[]>([])
     const [hasDeletedTask, sethasDeletedTask] = useState(false)
     const [page, setPage] = useState(1)
-    const totalPages = Math.ceil(completedTasks.length / 5)
-    const visibleItems = completedTasks.slice((page - 1) * 5, (page * 5)) //starts at what page you are, 2nd page 
+    const [searchInput, setSearchInput] = useState("")
+     const filteredItems = completedTasks.filter((item) => (item.content.toLowerCase()).includes(searchInput.toLowerCase()))
+    const totalPages = Math.ceil(filteredItems.length / 5)
+    const visibleItems = filteredItems.slice((page - 1) * 5, (page * 5)) //starts at what page you are, 2nd page 
     const { getToken } = useAuth()
     useEffect(() => {
         const fetchExpressData = async() => {
@@ -63,8 +65,12 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
             />
             <div className="flex-1 h-full items-center flex justify-center ">
                 <div className="w-8/12 min-h-11/12 h-fit bg-zinc-900 rounded-2xl p-6 shadow-2xl flex flex-col">
-                    <div className="pb-3 border-b border-zinc-800">
+                    <div className="pb-3 border-b border-zinc-800 flex justify-between">
                         <h2 className="text-2xl font-bold font-sans text-zinc-100 tracking-wide">Completed Tasks</h2>
+                        <div className="flex-1 flex justify-end items-center gap-3">
+                            <input onChange={(e) => {setSearchInput(e.target.value); }} className="rounded-lg  w-10/12 p-2 text-zinc-50 focus-visible:ring-2 focus-visible:ring-violet-600 outline-none bg-zinc-800"></input> 
+                            <Search className="text-zinc-50"/>
+                        </div>
                     </div>
                     <div className="w-full flex-1 my-4 border-2 border-dashed border-zinc-700 rounded-xl p-6 flex flex-col items-center justify-start gap-4 text-zinc-400 font-sans min-h-70">
                         {completedTasks.length <= 0 && <span className="text-sm font-medium text-zinc-600 font-sans tracking-wide select-none">No tasks completed yet!</span>}
