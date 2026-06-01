@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Left } from "../Components/Left";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"
-import { Check, PlusSquareIcon, Rotate3D, X } from "lucide-react";
+import { Check, PlusSquareIcon, Rotate3D, Search, X } from "lucide-react";
 import { useAuth } from "@clerk/react";
 import axios from "axios";
 import { API_URL } from "../api";
@@ -32,10 +32,10 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
     const [hasUpdatedEntry, setHasUpdatedEntry] = useState(false)
     const [targetEntry, setTargetEntry] = useState<JournalType>()
     const [page, setPage] = useState(1)
-    const totalPages = Math.ceil(journal.filter((j) => new Date(j.date_created).toLocaleDateString() === selectedDate?.toLocaleDateString()).length / 5) 
-    //the above starts the array at 0, 
-    //make it so that it only counts the ones whose date matches.
-    const visibleItems = (journal.filter((j) => new Date(j.date_created).toLocaleDateString() === selectedDate?.toLocaleDateString())).slice((page - 1) * 5, (page * 5)) 
+    const [searchInput, setSearchInput] = useState("")
+    const filteredItems = journal.filter((entry) => (entry.content.toLowerCase()).includes(searchInput.toLowerCase()))
+    const totalPages = Math.ceil(filteredItems.filter((j) => new Date(j.date_created).toLocaleDateString() === selectedDate?.toLocaleDateString()).length / 5) 
+    const visibleItems = (filteredItems.filter((j) => new Date(j.date_created).toLocaleDateString() === selectedDate?.toLocaleDateString())).slice((page - 1) * 5, (page * 5)) 
     useEffect(() => {
         const fetchExpressData = async() => {
             const token = await getToken()
@@ -106,7 +106,10 @@ export function Journal({setToggleSignIn, setToggleSignUp}: JournalProps){
                             selected={selectedDate}
                             onChange={(date: Date | null) => setSelectedDate(date)}/>
                         </div>
-                        <span>Number of Entries: {journal.filter(entry => selectedDate?.toLocaleDateString() === new Date(entry.date_created).toLocaleDateString()).length}</span>
+                        <div className="flex-1 flex justify-end items-center gap-3">
+                            <input onChange={(e) => setSearchInput(e.target.value)} className="rounded-lg  w-11/12 p-1 text-zinc-50 focus-visible:ring-2 focus-visible:ring-violet-600 outline-none bg-zinc-800"></input> 
+                            <Search size={30} className="text-zinc-50"/>
+                        </div>
                         
                     </div>
                     <div className="my-5 flex flex-col">
