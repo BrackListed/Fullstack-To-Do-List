@@ -23,7 +23,7 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
     const [hasDeletedTask, sethasDeletedTask] = useState(false)
     const [page, setPage] = useState(1)
     const [searchInput, setSearchInput] = useState("")
-    const filteredItems = completedTasks.filter((item) => (item.content.toLowerCase()).includes(searchInput.toLowerCase()))
+     const filteredItems = completedTasks.filter((item) => (item.content.toLowerCase()).includes(searchInput.toLowerCase()))
     const totalPages = Math.ceil(filteredItems.length / 5)
     const visibleItems = filteredItems.slice((page - 1) * 5, (page * 5)) //starts at what page you are, 2nd page 
     const { getToken } = useAuth()
@@ -75,7 +75,7 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
                     <div className="w-full flex-1 my-4 border-2 border-dashed border-zinc-700 rounded-xl p-6 flex flex-col items-center justify-start gap-4 text-zinc-400 font-sans min-h-70">
                         {completedTasks.length <= 0 && <span className="text-sm font-medium text-zinc-600 font-sans tracking-wide select-none">No tasks completed yet!</span>}
                         {completedTasks && <ul className="w-full flex flex-col gap-2.5">
-                            {filteredItems.map((task) => (
+                            {visibleItems.map((task) => (
                             <li className="w-full flex-1 bg-zinc-800/50 border border-zinc-800 rounded-lg p-3 text-sm text-zinc-300 flex items-center justify-between gap-3">
                                     <Check className="text-green-500 font-bold"/>
                                     <div className="flex w-full justify-between"><span>{task.content}</span>
