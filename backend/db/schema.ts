@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, uuid, text, timestamp, boolean, integer, serial } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, timestamp, boolean, jsonb, serial } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
     id: uuid("id").defaultRandom().primaryKey(),
@@ -33,7 +33,7 @@ export const completedTasks = pgTable("completed_tasks", {
 export const watch_list = pgTable("watch_list", {
     id: serial("id").primaryKey(),
     user_id: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
-    movie_id: integer("movie_id").notNull(),
+    movie: jsonb("movie")
 })
 
 export const userJournalRelations = relations(users, ({many}) => ({

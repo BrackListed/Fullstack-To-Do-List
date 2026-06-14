@@ -2,8 +2,8 @@ import { Save, Search, Star, X } from "lucide-react"
 import { Left } from "../Components/Left"
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { useAuth } from "@clerk/react"
 import { API_URL } from "../api"
+import { useAuth } from "@clerk/react"
 
 
 interface WatchlistProps{
@@ -26,6 +26,8 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
     const [searchInput, setSearchInput] = useState("")
     const [toggleSearch, setToggleSearch] = useState(false)
     const [hasAdded, setHasAdded] = useState(false)
+    const [userWatchList, setUserWatchList] = useState<MoviesType[]>([])
+    const {getToken, userId} = useAuth()
     useEffect(() => {
         const fetchMovieData = async(query: string) => {
             const result = await axios.get(`https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=en-US&page=1`, {withCredentials: false, headers: {Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4NWMxZDljOTRiODVmNjE3ZDk5MDI5ZjliZWI5ODNlNSIsIm5iZiI6MTc4MTQyMzcyOS43MjcsInN1YiI6IjZhMmU1ZTcxZTk5OTE2MjA0MjJjODFiMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.wRdCLwJqZ95_DJI73iAz2RqHsGN5TnMl7U6ET-HFYNQ`}})
@@ -33,6 +35,17 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
         }
         fetchMovieData(searchInput)
     }, [searchInput])
+
+    useEffect(() => {
+        const fetchWatchlistData = async() => {
+            if(!userId) return 
+            const token = getToken()
+            const result = await axios.get(`${API_URL}/watchlist/${userId}`, {headers: {Authorization: `Bearer ${token}`}})
+            console.log(result.data)
+            setUserWatchList(result.data.map((row: {movie: MoviesType}) => row.movie))
+        }
+        fetchWatchlistData()
+    }, [userId])
     return(
         <div className="flex w-screen h-screen">
             <Left
@@ -76,7 +89,7 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                                                 <span className="text-sm text-gray-400">{movie.overview}</span>
                                                 <button className="flex mt-3 items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-black text-[12px] font-medium hover:bg-white/90 hover:cursor-pointer transition-colors">
                                                     <Save/>
-                                                    <span onClick={() => addToWatchlist(movie.id)} className="font-semibold">Add to Watchlist</span>
+                                                    <span onClick={() => addToWatchlist(movie)} className="font-semibold">Add to Watchlist</span>
                                                 </button>
                                             </div>
                                         </div>
@@ -101,11 +114,15 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                     <div className="border-b-2 border-white/10"></div>
                 </div>
                 <div className="mt-10 flex w-12/12 gap-5 flex-wrap justify-center">
-                    <div className="flex flex-col">
-                        <div className="w-51 h-70 border-white/10 border-2 bg-neutral-900 rounded-md"></div>
-                        <span className="font-semibold mt-3">Title</span>
-                        <span className="text-sm text-gray-500">Author/Director</span>
-                    </div>
+                    {userWatchList.map((movie) => (
+                        <div className="flex flex-col">
+                        <img src = {`https://image.tmdb.org/t/p/w500${movie.poster_path}`} className="w-51 h-70 border-white/10 border-2 bg-neutral-900 rounded-md"></img>
+                        <span className="font-semibold mt-3">{movie.title}</span>
+                        <span className="flex gap-2 text-sm text-gray-500 items-center">
+                            <Star width={15} height={30} className="text-yellow-300 fill-yellow-300"/>
+                            {movie.vote_average}
+                        </span>
+                    </div>))}
                 </div>
             </div>
             <div className="fixed top-4 left-1/2 -translate-x-1/2 z-101">
@@ -122,8 +139,8 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
             </div>
         </div>
     )
-    async function addToWatchlist(movieId: number){
-        const result = await axios.post(`${API_URL}/watchlist/${movieId}`)
+    async function addToWatchlist(movie: MoviesType){
+        const result = await axios.post(`${API_URL}/watchlist`, {movie: movie})
         setHasAdded(result.data)
     }
 }
