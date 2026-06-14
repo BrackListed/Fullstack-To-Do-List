@@ -106,6 +106,19 @@ app.post("/data", async (req, res) => {
     res.json([{message: "Task added!"}])
 })
 
+app.post("/watchlist/:movieId", async(req, res) => {
+    const {userId} = (getAuth(req))
+    const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [userId])
+    const watchlist = await pool.query("SELECT movie_id FROM watch_list WHERE user_id = $1", [id.rows[0].id])
+    const isExisting = watchlist.rows.some((movie) => movie.movie_id === parseInt(req.params.movieId))
+    if(!isExisting){
+        await pool.query("INSERT INTO watch_list(user_id, movie_id) VALUES($1, $2)", [id.rows[0].id, req.params.movieId])
+        res.json(true)
+    } else{
+        res.json(false)
+    }
+})
+
 
 
 app.get("/data", async (req, res) => {
