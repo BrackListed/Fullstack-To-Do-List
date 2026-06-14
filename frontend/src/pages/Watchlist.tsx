@@ -1,12 +1,35 @@
 import { Search } from "lucide-react"
 import { Left } from "../Components/Left"
+import { useEffect, useState } from "react"
+import axios from "axios"
+import { useAuth } from "@clerk/react"
+
 
 interface WatchlistProps{
     setToggleSignIn: (value: boolean) => void
     setToggleSignUp: (value: boolean) => void
 }
 
+interface MoviesType {
+    title: string
+    release_date: string
+    vote_average: number
+    genre_ids: number[]
+    poster_path: string  
+    overview: string
+}
+
 export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
+    const [movies, setMovies] = useState<MoviesType[]>([])
+
+    useEffect(() => {
+        const fetchMovieData = async(query: string) => {
+            const result = await axios.get(`https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=en-US&page=1`, {withCredentials: false, headers: {Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4NWMxZDljOTRiODVmNjE3ZDk5MDI5ZjliZWI5ODNlNSIsIm5iZiI6MTc4MTQyMzcyOS43MjcsInN1YiI6IjZhMmU1ZTcxZTk5OTE2MjA0MjJjODFiMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.wRdCLwJqZ95_DJI73iAz2RqHsGN5TnMl7U6ET-HFYNQ`}})
+            setMovies(result.data.results)
+        }
+        fetchMovieData('Batman')
+    }, [])
+    console.log(movies)
     return(
         <div className="flex w-screen h-screen">
             <Left
