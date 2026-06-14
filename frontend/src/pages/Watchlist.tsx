@@ -41,7 +41,6 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
             if(!userId) return 
             const token = getToken()
             const result = await axios.get(`${API_URL}/watchlist/${userId}`, {headers: {Authorization: `Bearer ${token}`}})
-            console.log(result.data)
             setUserWatchList(result.data.map((row: {movie: MoviesType}) => row.movie))
         }
         fetchWatchlistData()
