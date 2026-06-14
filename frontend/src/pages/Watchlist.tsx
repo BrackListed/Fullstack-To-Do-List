@@ -45,7 +45,8 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
             setUserWatchList(result.data.map((row: {movie: MoviesType}) => row.movie))
         }
         fetchWatchlistData()
-    }, [userId])
+    }, [userId, deleteFromWatchlist, addToWatchlist])
+
     return(
         <div className="flex w-screen h-screen">
             <Left
