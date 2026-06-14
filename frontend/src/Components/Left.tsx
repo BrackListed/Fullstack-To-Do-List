@@ -1,5 +1,5 @@
 import { useAuth, UserButton, useUser } from "@clerk/react"
-import { Calendar, Home, ListChecks } from "lucide-react"
+import { Calendar, Clapperboard, Home, ListChecks } from "lucide-react"
 import { Link } from "react-router-dom"
 
 interface LeftProps{
@@ -25,6 +25,7 @@ export function Left({setToggleSignIn, setToggleSignUp}: LeftProps){
                 <Link to = "/"><div className="flex text-2xl text-center hover:bg-gray-200 rounded-lg hover:cursor-pointer hover:p-1 hover:scale-105 transition-all items-center h-fit gap-3"><Home className="text-2xl"/><span>Home</span></div></Link>
                 <Link to = "/Completed"><div className="flex text-2xl text-center hover:bg-gray-200 my-5 rounded-lg hover:cursor-pointer hover:p-1 hover:scale-105 transition-all items-center h-fit gap-3"><ListChecks className="text-2xl"/><span>Tasks Done</span></div></Link>
                 <Link to = "/Journal"><div className="flex text-2xl text-center hover:bg-gray-200 my-5 rounded-lg hover:cursor-pointer hover:p-1 hover:scale-105 transition-all items-center h-fit gap-3"><Calendar className="text-2xl"/><span>Journal</span></div></Link>
+                <Link to = "/Watchlist"><div className="flex text-2xl text-center hover:bg-gray-200 my-5 rounded-lg hover:cursor-pointer hover:p-1 hover:scale-105 transition-all items-center h-fit gap-3"><Clapperboard className="text-2xl"/><span>Watchlist</span></div></Link>
             </div>
         </div>
     )

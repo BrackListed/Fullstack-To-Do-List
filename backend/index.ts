@@ -107,6 +107,7 @@ app.post("/data", async (req, res) => {
 })
 
 
+
 app.get("/data", async (req, res) => {
     const {userId} = getAuth(req)
     const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [userId])
