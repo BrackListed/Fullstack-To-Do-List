@@ -10,3 +10,7 @@ Give the website a few seconds up to 3 minutes in order to load. This is due to 
 ![Completed Tasks Page Preview](./frontend/public/Completed_Tasks.png)
 ### 📷 Journal page
 ![Journal Page Preview](./frontend/public/Jourrnal_Page.png)
+### 📷 Watchlist page
+![Watchlist Page Preview](./frontend/public/Watchlist.png)
+### 📷 Watchlist Search 
+![Watchlist Search Preview](./frontend/public/Watchlist_Search.png)
