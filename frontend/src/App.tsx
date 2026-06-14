@@ -5,6 +5,7 @@ import { Completed } from "./pages/Completed";
 import { useState } from "react";
 import { Left } from "./Components/Left";
 import { Journal } from "./pages/Journal";
+import { Watchlist } from "./pages/Watchlist";
 
 export default function App(){
     const [toggleSignIn, setToggleSignIn] = useState(false)
@@ -29,6 +30,10 @@ export default function App(){
         setToggleSignUp = {setToggleSignUp}
       /></div>}></Route>
       <Route path = "/Journal" element = {<div className="flex-1"><Journal
+        setToggleSignIn = {setToggleSignIn}
+        setToggleSignUp = {setToggleSignUp}
+      /></div>}></Route>
+      <Route path = "/Watchlist" element = {<div className="flex-1"><Watchlist
         setToggleSignIn = {setToggleSignIn}
         setToggleSignUp = {setToggleSignUp}
       /></div>}></Route>
