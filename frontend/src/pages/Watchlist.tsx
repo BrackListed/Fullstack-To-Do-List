@@ -1,4 +1,4 @@
-import { Search, X } from "lucide-react"
+import { Save, Search, Star, X } from "lucide-react"
 import { Left } from "../Components/Left"
 import { useEffect, useState } from "react"
 import axios from "axios"
@@ -43,6 +43,43 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                         <div className="flex gap-2">
                             <div className="flex h-9 items-center justify-center rounded-lg px-3 text-[13px] text-gray-300 glass-card-dark backdrop-blur-xl border border-white/10 w-44 pl-4">Movies & Tv Shows</div>
                             <button onClick={() => setToggleSearch(false)} className=" hover:cursor-pointer p-2 rounded-lg hover:bg-white/10 transition-colors group glass-card-dark backdrop-blur-xl border border-white/10 aspect-square flex items-center justify-center h-9"><X/></button>
+                        </div>
+                    </div>
+                    <div className="w-full flex items-center p-3 glass-card-dark backdrop-blur-xl border border-white/10 rounded-xl h-12 overflow-hidden">
+                        <Search/>
+                        <input placeholder="Type here to search..." className="w-full h-full bg-transparent pl-5 pr-10 text-base text-gray-100 placeholder:text-gray-400 tracking-wide outline-none"></input>
+                    </div>
+                    <div className="glass-card-dark backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+                        <div className="border-t border-white/6 p-3 max-h-[50vh] overflow-y-auto overflow-x-hidden">
+                            <div className="rounded-lg transition-colors duration-150">
+                                <div className="flex flex-col justify-center gap-3 px-3 py-2.5 cursor-pointer">
+                                    <div className="flex w-full h-full gap-3">
+                                        <div className="w-11 h-16 shrink-0 rounded-[5px] overflow-hidden bg-white/5">
+                                            <img src = "" className="w-full h-full object-cover"></img>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <span className="text-[14px] font-medium text-white line-clamp-1">The Movie</span>
+                                            <div className="flex items-center gap-1.5 mt-1 text-[12px] text-gray-500 flex-wrap">
+                                                <span>Movie</span>
+                                                <span className="text-white/15">|</span>
+                                                <span>2023</span>
+                                                <span className="text-white/15">|</span>
+                                                <span className="flex items-center gap-0.5">
+                                                    <Star className="fill-yellow-400"/>
+                                                    7.661
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="overflow-hidden transition-all duration-300 ease-out max-h-50 opacity-100">
+                                        <span className="text-sm text-gray-400">Descripton summary</span>
+                                        <button className="flex mt-3 items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-black text-[12px] font-medium hover:bg-white/90 hover:cursor-pointer transition-colors">
+                                            <Save/>
+                                            <span className="font-semibold">Add to Watchlist</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
