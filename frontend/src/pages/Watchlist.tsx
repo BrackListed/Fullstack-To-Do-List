@@ -115,7 +115,8 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                 </div>
                 <div className="mt-10 flex w-12/12 gap-5 flex-wrap justify-center">
                     {userWatchList.map((movie) => (
-                        <div className="flex flex-col">
+                    <div className="flex flex-col relative">
+                        <button onClick={() => deleteFromWatchlist(movie, userId)} className="absolute top-2 right-2 bg-black/60 rounded-full p-1 hover:cursor-pointer hover:bg-black/80"><X/></button>
                         <img src = {`https://image.tmdb.org/t/p/w500${movie.poster_path}`} className="w-51 h-70 border-white/10 border-2 bg-neutral-900 rounded-md"></img>
                         <span className="font-semibold mt-3">{movie.title}</span>
                         <span className="flex gap-2 text-sm text-gray-500 items-center">
@@ -142,5 +143,8 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
     async function addToWatchlist(movie: MoviesType){
         const result = await axios.post(`${API_URL}/watchlist`, {movie: movie})
         setHasAdded(result.data)
+    }
+    async function deleteFromWatchlist(movie: MoviesType, userId: string | null | undefined){
+        await axios.delete(`${API_URL}/watchlist/delete/${userId}`, {data: {movie: movie}})
     }
 }
