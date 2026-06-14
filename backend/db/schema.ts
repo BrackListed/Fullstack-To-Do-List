@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, uuid, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, timestamp, boolean, integer, serial } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
     id: uuid("id").defaultRandom().primaryKey(),
@@ -30,6 +30,12 @@ export const completedTasks = pgTable("completed_tasks", {
     dateCompleted: timestamp("date_completed", {withTimezone: true}).defaultNow().notNull()
 })
 
+export const watch_list = pgTable("watch_list", {
+    id: serial("id").primaryKey(),
+    user_id: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
+    movie_id: integer("movie_id").notNull(),
+})
+
 export const userJournalRelations = relations(users, ({many}) => ({
     journal: many(journal)
 }))
@@ -44,4 +50,15 @@ export const userTaskRelations = relations(users, ({many}) => ({
 
 export const taskUserRelations = relations(tasks, ({one}) => ({
     users: one(users, {fields: [tasks.userId], references: [users.id]})
+}))
+
+export const usersWatchlistRelations = relations(users, ({ many }) => ({
+    watch_list: many(watch_list),
+}))
+
+export const watchListUserRelations = relations(watch_list, ({ one }) => ({
+    user: one(users, {
+        fields: [watch_list.user_id],
+        references: [users.id],
+    }),
 }))
