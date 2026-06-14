@@ -25,7 +25,7 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
     const [movies, setMovies] = useState<MoviesType[]>([])
     const [searchInput, setSearchInput] = useState("")
     const [toggleSearch, setToggleSearch] = useState(false)
-    const [hasAdded, setHasAdded] = useState(false)
+    const [hasAdded, setHasAdded] = useState<boolean | null>(null)
     const [userWatchList, setUserWatchList] = useState<MoviesType[]>([])
     const {getToken, userId} = useAuth()
     useEffect(() => {
@@ -47,6 +47,18 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
         fetchWatchlistData()
     }, [userId, deleteFromWatchlist, addToWatchlist])
 
+
+    useEffect(() => {
+        if(hasAdded){
+            setTimeout(() => {
+                setHasAdded(null)
+            }, 1000);
+        } else{
+            setTimeout(() => {
+                setHasAdded(null)
+            }, 1000);
+        }
+    }, [hasAdded])
     return(
         <div className="flex w-screen h-screen">
             <Left
