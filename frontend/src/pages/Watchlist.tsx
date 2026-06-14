@@ -55,7 +55,7 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                                 {movies.map((movie) => (<div className="flex flex-col justify-center gap-3 px-3 py-2.5 cursor-pointer">
                                     <div className="flex w-full h-full gap-3">
                                         <div className="w-11 h-16 shrink-0 rounded-[5px] overflow-hidden bg-white/5">
-                                            <img src = "" className="w-full h-full object-cover"></img>
+                                            <img src = {`https://image.tmdb.org/t/p/w500${movie.poster_path}`} className="w-full h-full object-cover"></img>
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <span className="text-[14px] font-medium text-white line-clamp-1">{movie.title}</span>
