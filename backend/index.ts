@@ -109,10 +109,15 @@ app.post("/data", async (req, res) => {
 app.post("/watchlist", async(req, res) => {
     const {userId} = (getAuth(req))
     const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [userId])
-    const watchlist = await pool.query("SELECT movie FROM watch_list WHERE user_id = $1", [id.rows[0].id])
-    const isExisting = watchlist.rows.some((movie) => movie.movie.id === (req.body.movie.id))
-    if(!isExisting){
+    const watchlistMovie = await pool.query("SELECT movie FROM watch_list WHERE user_id = $1", [id.rows[0].id])
+    const movieIsExisting = watchlistMovie.rows.some((movie) => movie.movie?.id === (req.body.movie.id))
+    const watchlistTv = await pool.query("SELECT tv FROM watch_list WHERE user_id = $1", [id.rows[0].id])
+    const tvIsExisting = watchlistTv.rows.some((tv) => tv.tv?.id === (req.body.tv.id))
+    if(!movieIsExisting && req.body.movie){
         await pool.query("INSERT INTO watch_list(user_id, movie) VALUES($1, $2)", [id.rows[0].id, req.body.movie])
+        res.json(true)
+    }else if(!tvIsExisting && req.body.tv){
+        await pool.query("INSERT INTO watch_list(user_id, tv) VALUES($1, $2)", [id.rows[0].id, req.body.tv])
         res.json(true)
     } else{
         res.json(false)
@@ -121,7 +126,7 @@ app.post("/watchlist", async(req, res) => {
 
 app.get("/watchlist/:userId", async(req, res) => {
     const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [req.params.userId])
-    const watchlist = await pool.query("SELECT movie FROM watch_list WHERE user_id = $1", [id.rows[0].id])
+    const watchlist = await pool.query("SELECT movie, tv FROM watch_list WHERE user_id = $1", [id.rows[0].id])
     res.json(watchlist.rows)
 })
 

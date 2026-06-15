@@ -23,7 +23,7 @@ export function Completed({setToggleSignIn, setToggleSignUp}: CompletedProps){
     const [hasDeletedTask, sethasDeletedTask] = useState(false)
     const [page, setPage] = useState(1)
     const [searchInput, setSearchInput] = useState("")
-     const filteredItems = completedTasks.filter((item) => (item.content.toLowerCase()).includes(searchInput.toLowerCase()))
+    const filteredItems = completedTasks.filter((item) => (item.content.toLowerCase()).includes(searchInput.toLowerCase()))
     const totalPages = Math.ceil(filteredItems.length / 5)
     const visibleItems = filteredItems.slice((page - 1) * 5, (page * 5)) //starts at what page you are, 2nd page 
     const { getToken } = useAuth()

@@ -126,7 +126,7 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                                                 <span className="text-sm text-gray-400">{movie.overview}</span>
                                                 <button className="flex mt-3 items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-black text-[12px] font-medium hover:bg-white/90 hover:cursor-pointer transition-colors">
                                                     <Save/>
-                                                    <span onClick={() => addToWatchlist(movie)} className="font-semibold">Add to Watchlist</span>
+                                                    <span onClick={() => addToWatchlist(movie, undefined)} className="font-semibold">Add to Watchlist</span>
                                                 </button>
                                             </div>
                                         </div>
@@ -138,28 +138,28 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                     {(seriesType === "TV") && <div className="glass-card-dark backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
                         <div className="border-t border-white/6 p-3 max-h-[50vh] overflow-y-auto overflow-x-hidden scrollbar-none">
                             <div className="rounded-lg transition-colors duration-150">
-                                {movies.map((movie) => (<div className="flex flex-col justify-center gap-3 px-3 py-2.5 cursor-pointer">
+                                {tvSeries.map((series) => (<div className="flex flex-col justify-center gap-3 px-3 py-2.5 cursor-pointer">
                                     <div className="flex w-full h-full gap-3">
                                         <div className="w-11 h-16 shrink-0 rounded-[5px] overflow-hidden bg-white/5">
-                                            <img src = {`https://image.tmdb.org/t/p/w500${movie.poster_path}`} className="w-full h-full object-cover"></img>
+                                            <img src = {`https://image.tmdb.org/t/p/w500${series.poster_path}`} className="w-full h-full object-cover"></img>
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <span className="text-[14px] font-medium text-white line-clamp-1">{movie.title}</span>
+                                            <span className="text-[14px] font-medium text-white line-clamp-1">{series.name}</span>
                                             <div className="flex items-center gap-1.5 mt-1 text-[12px] text-gray-500 flex-wrap">
                                                 <span>Movie</span>
                                                 <span className="text-white/15">|</span>
-                                                <span>{movie.release_date.slice(0, 4)}</span>
+                                                <span>{series.first_air_date.slice(0, 4)}</span>
                                                 <span className="text-white/15">|</span>
                                                 <span className="flex items-center gap-0.5">
                                                     <Star className="fill-yellow-400"/>
-                                                    {movie.vote_average}
+                                                    {series.vote_average}
                                                 </span>
                                             </div>
                                             <div className="overflow-hidden transition-all duration-300 ease-out max-h-full opacity-100">
-                                                <span className="text-sm text-gray-400">{movie.overview}</span>
+                                                <span className="text-sm text-gray-400">{series.overview}</span>
                                                 <button className="flex mt-3 items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-black text-[12px] font-medium hover:bg-white/90 hover:cursor-pointer transition-colors">
                                                     <Save/>
-                                                    <span onClick={() => addToWatchlist(movie)} className="font-semibold">Add to Watchlist</span>
+                                                    <span onClick={() => addToWatchlist(undefined, series)} className="font-semibold">Add to Watchlist</span>
                                                 </button>
                                             </div>
                                         </div>
@@ -210,9 +210,14 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
             </div>
         </div>
     )
-    async function addToWatchlist(movie: MoviesType){
-        const result = await axios.post(`${API_URL}/watchlist`, {movie: movie})
-        setHasAdded(result.data)
+    async function addToWatchlist(movie?: MoviesType, tv?: TvType){
+        if(movie){
+            const result = await axios.post(`${API_URL}/watchlist`, {movie: movie})
+            setHasAdded(result.data)
+        }else if(tv){
+            const result = await axios.post(`${API_URL}/watchlist`, {tv: tv})
+            setHasAdded(result.data)
+        }
     }
     async function deleteFromWatchlist(movie: MoviesType, userId: string | null | undefined){
         await axios.delete(`${API_URL}/watchlist/delete/${userId}`, {data: {movie: movie}})

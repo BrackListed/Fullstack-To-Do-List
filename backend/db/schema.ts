@@ -33,7 +33,8 @@ export const completedTasks = pgTable("completed_tasks", {
 export const watch_list = pgTable("watch_list", {
     id: serial("id").primaryKey(),
     user_id: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
-    movie: jsonb("movie")
+    movie: jsonb("movie"),
+    tv: jsonb("tv"),
 })
 
 export const userJournalRelations = relations(users, ({many}) => ({
