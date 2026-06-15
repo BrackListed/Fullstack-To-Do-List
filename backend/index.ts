@@ -132,7 +132,11 @@ app.get("/watchlist/:userId", async(req, res) => {
 
 app.delete("/watchlist/delete/:userId", async(req, res) => {
     const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [req.params.userId])
-    await pool.query("DELETE FROM watch_list WHERE user_id = $1 AND movie = $2", [id.rows[0].id, req.body.movie])
+    if(req.body.movie){
+        await pool.query("DELETE FROM watch_list WHERE user_id = $1 AND movie = $2", [id.rows[0].id, req.body.movie])
+    } else if(req.body.tv){
+        await pool.query("DELETE FROM watch_list WHERE user_id = $1 AND tv = $2", [id.rows[0].id, req.body.tv])
+    }
 })
 
 
