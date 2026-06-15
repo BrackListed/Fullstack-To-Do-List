@@ -83,7 +83,14 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
             }, 1000);
         }
     }, [hasAdded])
-    
+    useEffect(() => {
+        if(hasCompleted){
+            setTimeout(() => {
+                setHasCompleted(false)
+            }, 1000);
+        }
+    }, [hasCompleted])
+    console.log(userWatchList)
     return(
         <div className="flex w-screen h-screen">
             <Left
@@ -194,7 +201,8 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                 {currentPage === "Collection" && <div className="mt-10 flex w-12/12 gap-5 flex-wrap justify-center">
                     {userWatchList.filter(item => item !== null).map((item) => {
                     const media = item.movie ?? item.tv
-                    if(!media) return 
+                    if(!media) return
+                    if(item.completed) return   
                     return(<div className="flex flex-col relative w-51 justify-between">
                         <button onClick={() => 'title' in media ? deleteFromWatchlist(media, undefined, userId) : deleteFromWatchlist(undefined, media, userId)} className="absolute top-2 right-2 bg-black/60 rounded-full p-1 hover:cursor-pointer hover:bg-black/80"><X/></button>
                         <img src = {`https://image.tmdb.org/t/p/w500${media.poster_path}`} className="w-full h-70 border-white/10 border-2 bg-neutral-900 rounded-md"></img>
@@ -204,6 +212,21 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                             {media.vote_average}
                         </span>
                         <button onClick={() => 'title' in media ? addToCompleted(media, undefined, userId) : addToCompleted(undefined, media, userId)} className="mt-2 text-[12px] font-medium px-3 py-1.5 rounded-full border border-white/20 text-white/70 hover:bg-white/10 hover:cursor-pointer transition-colors">Mark as watched</button>
+                    </div>)})}
+                </div>}
+                {currentPage === "Completed" && <div className="mt-10 flex w-12/12 gap-5 flex-wrap justify-center">
+                    {userWatchList.filter(item => item !== null).map((item) => {
+                    const media = item.movie ?? item.tv
+                    if(!media) return
+                    if(!item.completed) return   
+                    return(<div className="flex flex-col relative w-51 justify-between">
+                        <button onClick={() => 'title' in media ? deleteFromWatchlist(media, undefined, userId) : deleteFromWatchlist(undefined, media, userId)} className="absolute top-2 right-2 bg-black/60 rounded-full p-1 hover:cursor-pointer hover:bg-black/80"><X/></button>
+                        <img src = {`https://image.tmdb.org/t/p/w500${media.poster_path}`} className="w-full h-70 border-white/10 border-2 bg-neutral-900 rounded-md"></img>
+                        <span className="font-semibold mt-3">{"title" in media ? media.title : media.name}</span>
+                        <span className="flex gap-2 text-sm text-gray-500 items-center">
+                            <Star width={15} height={30} className="text-yellow-300 fill-yellow-300"/>
+                            {media.vote_average}
+                        </span>
                     </div>)})}
                 </div>}
             </div>

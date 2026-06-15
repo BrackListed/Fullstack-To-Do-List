@@ -126,7 +126,7 @@ app.post("/watchlist", async(req, res) => {
 
 app.get("/watchlist/:userId", async(req, res) => {
     const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [req.params.userId])
-    const watchlist = await pool.query("SELECT movie, tv FROM watch_list WHERE user_id = $1", [id.rows[0].id])
+    const watchlist = await pool.query("SELECT movie, tv, completed FROM watch_list WHERE user_id = $1", [id.rows[0].id])
     res.json(watchlist.rows)
 })
 
