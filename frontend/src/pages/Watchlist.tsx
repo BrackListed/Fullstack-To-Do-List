@@ -31,16 +31,24 @@ interface TvType {
     overview: string
 }
 
+interface WatchListItem {
+    movie: MoviesType | null
+    tv: TvType | null
+    completed: boolean
+}
+
 export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
     const [movies, setMovies] = useState<MoviesType[]>([])
     const [tvSeries, setTvSeries] = useState<TvType[]>([])
     const [searchInput, setSearchInput] = useState("")
     const [toggleSearch, setToggleSearch] = useState(false)
     const [hasAdded, setHasAdded] = useState<boolean | null>(null)
-    const [userWatchList, setUserWatchList] = useState<(MoviesType | TvType)[]>([])
+    const [userWatchList, setUserWatchList] = useState<(WatchListItem[])>([])
     const [seriesType, setSeriesType] = useState<"Movies" | "TV">("Movies")
     const [seriesTypeSelector, setSeriesTypeSelector] = useState(false)
     const {getToken, userId} = useAuth()
+    const [currentPage, setCurrentPage] = useState<"Collection" |"Completed">("Collection")
+    const [hasCompleted, setHasCompleted] = useState(false)
     useEffect(() => {
         const fetchMovieData = async(query: string) => {
             const result = await axios.get(`https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=en-US&page=1`, {withCredentials: false, headers: {Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4NWMxZDljOTRiODVmNjE3ZDk5MDI5ZjliZWI5ODNlNSIsIm5iZiI6MTc4MTQyMzcyOS43MjcsInN1YiI6IjZhMmU1ZTcxZTk5OTE2MjA0MjJjODFiMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.wRdCLwJqZ95_DJI73iAz2RqHsGN5TnMl7U6ET-HFYNQ`}})
@@ -59,7 +67,7 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
             if(!userId) return 
             const token = getToken()
             const result = await axios.get(`${API_URL}/watchlist/${userId}`, {headers: {Authorization: `Bearer ${token}`}})
-            setUserWatchList(result.data.map((row: {movie: MoviesType, tv: TvType}) => row.movie ?? row.tv))
+            setUserWatchList(result.data)
         }
         fetchWatchlistData()
     }, [userId, deleteFromWatchlist, addToWatchlist])
@@ -94,7 +102,6 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                                     <button onClick={() => {setSeriesType("TV"); setSeriesTypeSelector(false)}} className="hover:cursor-pointer w-full text-left px-4 py-2 text-[13px] transition-colors text-gray-400 hover:text-white hover:bg-white/5">TV Shows</button>
                                 </div>}
                             </div>
-                            {/* <div className="hover:cursor-pointer hover:bg-white/6 flex h-9 items-center gap-3 justify-center rounded-lg px-3 text-[13px] text-gray-300 glass-card-dark backdrop-blur-xl border border-white/10 w-44 pl-4">Movies<ChevronDown/></div> */}
                             <button onClick={() => setToggleSearch(false)} className=" hover:cursor-pointer p-2 rounded-lg hover:bg-white/10 transition-colors group glass-card-dark backdrop-blur-xl border border-white/10 aspect-square flex items-center justify-center h-9"><X/></button>
                         </div>
                     </div>
@@ -180,32 +187,39 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                     </div>
                 </div>
                 <div>
-                    <span className="font-semibold border-b-4 border-white w-fit">My Collection</span>
+                    <span onClick={() => setCurrentPage("Collection")} className={`${currentPage === "Collection" ? "border-b-4 border-white" : ""}hover:cursor-pointer font-semibold w-fit`}>My Collection</span>
+                    <span onClick={() => setCurrentPage("Completed")} className={`${currentPage === "Completed" ? "border-b-4 border-white" : ""}hover: cursor-pointer ml-3 font-semibold w-fit`}>Finished Movies</span>
                     <div className="border-b-2 border-white/10"></div>
                 </div>
-                <div className="mt-10 flex w-12/12 gap-5 flex-wrap justify-center">
-                    {userWatchList.filter(item => item !== null).map((item) => (
-                    <div className="flex flex-col relative">
-                        <button onClick={() => 'title' in item ? deleteFromWatchlist(item, undefined, userId) : deleteFromWatchlist(undefined, item, userId)} className="absolute top-2 right-2 bg-black/60 rounded-full p-1 hover:cursor-pointer hover:bg-black/80"><X/></button>
-                        <img src = {`https://image.tmdb.org/t/p/w500${item.poster_path}`} className="w-51 h-70 border-white/10 border-2 bg-neutral-900 rounded-md"></img>
-                        <span className="font-semibold mt-3">{"title" in item ? item.title : item.name}</span>
+                {currentPage === "Collection" && <div className="mt-10 flex w-12/12 gap-5 flex-wrap justify-center">
+                    {userWatchList.filter(item => item !== null).map((item) => {
+                    const media = item.movie ?? item.tv
+                    if(!media) return 
+                    return(<div className="flex flex-col relative w-51 justify-between">
+                        <button onClick={() => 'title' in media ? deleteFromWatchlist(media, undefined, userId) : deleteFromWatchlist(undefined, media, userId)} className="absolute top-2 right-2 bg-black/60 rounded-full p-1 hover:cursor-pointer hover:bg-black/80"><X/></button>
+                        <img src = {`https://image.tmdb.org/t/p/w500${media.poster_path}`} className="w-full h-70 border-white/10 border-2 bg-neutral-900 rounded-md"></img>
+                        <span className="font-semibold mt-3">{"title" in media ? media.title : media.name}</span>
                         <span className="flex gap-2 text-sm text-gray-500 items-center">
                             <Star width={15} height={30} className="text-yellow-300 fill-yellow-300"/>
-                            {item.vote_average}
+                            {media.vote_average}
                         </span>
-                    </div>))}
-                </div>
+                        <button onClick={() => 'title' in media ? addToCompleted(media, undefined, userId) : addToCompleted(undefined, media, userId)} className="mt-2 text-[12px] font-medium px-3 py-1.5 rounded-full border border-white/20 text-white/70 hover:bg-white/10 hover:cursor-pointer transition-colors">Mark as watched</button>
+                    </div>)})}
+                </div>}
             </div>
             <div className="fixed top-4 left-1/2 -translate-x-1/2 z-101">
                 {hasAdded === true && (
                     <div className="bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium">
-                        Movie has been added to watchlist successfully
+                        Series has been added to watchlist successfully
                     </div>
                 )}
                 {hasAdded === false && (
                     <div className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-medium">
-                        Movie already exists in watchlist
+                        Series already exists in watchlist
                     </div>
+                )}
+                {hasCompleted === true && (
+                    <div className="bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium">Series has been added to Completed Page</div>
                 )}
             </div>
         </div>
@@ -224,6 +238,15 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
             await axios.delete(`${API_URL}/watchlist/delete/${userId}`, {data: {movie: movie}})
         } else if(tv){
             await axios.delete(`${API_URL}/watchlist/delete/${userId}`, {data: {tv: tv}})
+        }
+    }
+    async function addToCompleted(movie: MoviesType | undefined, tv: TvType | undefined, userId: string | null | undefined){
+        if(movie){
+            const result = await axios.put(`${API_URL}/watchlist/complete/${userId}`, {movie: movie})
+            setHasCompleted(result.data)
+        }else if(tv){
+            const result = await axios.put(`${API_URL}/watchlist/complete/${userId}`, {tv: tv})
+            setHasCompleted(result.data)
         }
     }
 }

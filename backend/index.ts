@@ -112,7 +112,7 @@ app.post("/watchlist", async(req, res) => {
     const watchlistMovie = await pool.query("SELECT movie FROM watch_list WHERE user_id = $1", [id.rows[0].id])
     const movieIsExisting = watchlistMovie.rows.some((movie) => movie.movie?.id === (req.body.movie?.id))
     const watchlistTv = await pool.query("SELECT tv FROM watch_list WHERE user_id = $1", [id.rows[0].id])
-    const tvIsExisting = watchlistTv.rows.some((tv) => tv.tv?.id === (req.body.tv.id))
+    const tvIsExisting = watchlistTv.rows.some((tv) => tv.tv?.id === (req.body.tv?.id))
     if(!movieIsExisting && req.body.movie){
         await pool.query("INSERT INTO watch_list(user_id, movie) VALUES($1, $2)", [id.rows[0].id, req.body.movie])
         res.json(true)
@@ -136,6 +136,19 @@ app.delete("/watchlist/delete/:userId", async(req, res) => {
         await pool.query("DELETE FROM watch_list WHERE user_id = $1 AND movie = $2", [id.rows[0].id, req.body.movie])
     } else if(req.body.tv){
         await pool.query("DELETE FROM watch_list WHERE user_id = $1 AND tv = $2", [id.rows[0].id, req.body.tv])
+    }
+})
+
+app.put("/watchlist/complete/:userId", async(req, res) => {
+    const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [req.params.userId])
+    if(req.body.movie){
+        await pool.query("UPDATE watch_list SET completed = $1 WHERE movie = $2 AND user_id = $3", [true, req.body.movie, id.rows[0].id])
+        res.json(true)
+    } else if(req.body.tv){
+        await pool.query("UPDATE watch_list SET completed = $1 WHERE tv = $2 AND user_id = $3", [true, req.body.tv, id.rows[0].id])
+        res.json(true)
+    } else{
+        res.json(false)
     }
 })
 
