@@ -75,6 +75,7 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
             }, 1000);
         }
     }, [hasAdded])
+    
     return(
         <div className="flex w-screen h-screen">
             <Left
@@ -87,8 +88,11 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                         <span className="text-2xl font-semibold">Search</span>
                         <div className="flex gap-2">
                             <div className="relative">
-                                <button onClick={() => setSeriesTypeSelector(true)} className="flex h-9 items-center justify-between rounded-lg px-3 text-[13px] text-gray-300 glass-card-dark backdrop-blur-xl border border-white/10 w-44 pl-4 transition-colors hover:cursor-pointer hover:bg-white/6">Movies <ChevronDown/></button>
-                                <div className="absolute top-full right-0 mt-1.5 w-48 glass-card-dark backdrop-blur-xl border border-white/10 rounded-xl py-1 shadow-2xl z-10000"></div>
+                                <button onClick={() => setSeriesTypeSelector(!seriesTypeSelector)} className="flex h-9 items-center justify-between rounded-lg px-3 text-[13px] text-gray-300 glass-card-dark backdrop-blur-xl border border-white/10 w-44 pl-4 transition-colors hover:cursor-pointer hover:bg-white/6">Movies <ChevronDown/></button>
+                                {seriesTypeSelector && <div className="absolute top-full right-0 mt-1.5 w-48 glass-card-dark backdrop-blur-xl border border-white/10 rounded-xl py-1 shadow-2xl z-10000">
+                                    <button onClick={() => {setSeriesType("Movies"); setSeriesTypeSelector(false)}} className="hover:cursor-pointer w-full text-left px-4 py-2 text-[13px] transition-colors text-gray-400 hover:text-white hover:bg-white/5">Movies</button>
+                                    <button onClick={() => {setSeriesType("TV"); setSeriesTypeSelector(false)}} className="hover:cursor-pointer w-full text-left px-4 py-2 text-[13px] transition-colors text-gray-400 hover:text-white hover:bg-white/5">TV Shows</button>
+                                </div>}
                             </div>
                             {/* <div className="hover:cursor-pointer hover:bg-white/6 flex h-9 items-center gap-3 justify-center rounded-lg px-3 text-[13px] text-gray-300 glass-card-dark backdrop-blur-xl border border-white/10 w-44 pl-4">Movies<ChevronDown/></div> */}
                             <button onClick={() => setToggleSearch(false)} className=" hover:cursor-pointer p-2 rounded-lg hover:bg-white/10 transition-colors group glass-card-dark backdrop-blur-xl border border-white/10 aspect-square flex items-center justify-center h-9"><X/></button>
@@ -98,7 +102,7 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                         <Search/>
                         <input onChange={(e) => setSearchInput(e.target.value)} placeholder="Type here to search..." className="w-full h-full bg-transparent pl-5 pr-10 text-base text-gray-100 placeholder:text-gray-400 tracking-wide outline-none"></input>
                     </div>
-                    <div className="glass-card-dark backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+                    {(seriesType === "Movies") && <div className="glass-card-dark backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
                         <div className="border-t border-white/6 p-3 max-h-[50vh] overflow-y-auto overflow-x-hidden scrollbar-none">
                             <div className="rounded-lg transition-colors duration-150">
                                 {movies.map((movie) => (<div className="flex flex-col justify-center gap-3 px-3 py-2.5 cursor-pointer">
@@ -128,7 +132,13 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                                         </div>
                                     </div>
                                 </div>))}
-                                {/* {movies.map((movie) => (<div className="flex flex-col justify-center gap-3 px-3 py-2.5 cursor-pointer">
+                            </div>
+                        </div>
+                    </div>}
+                    {(seriesType === "TV") && <div className="glass-card-dark backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+                        <div className="border-t border-white/6 p-3 max-h-[50vh] overflow-y-auto overflow-x-hidden scrollbar-none">
+                            <div className="rounded-lg transition-colors duration-150">
+                                {movies.map((movie) => (<div className="flex flex-col justify-center gap-3 px-3 py-2.5 cursor-pointer">
                                     <div className="flex w-full h-full gap-3">
                                         <div className="w-11 h-16 shrink-0 rounded-[5px] overflow-hidden bg-white/5">
                                             <img src = {`https://image.tmdb.org/t/p/w500${movie.poster_path}`} className="w-full h-full object-cover"></img>
@@ -154,10 +164,10 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                                             </div>
                                         </div>
                                     </div>
-                                </div>))} */}
+                                </div>))}
                             </div>
                         </div>
-                    </div>
+                    </div>}
                 </div>
             </div>}
             <div className="flex-1 flex flex-col text-zinc-50 px-10">
