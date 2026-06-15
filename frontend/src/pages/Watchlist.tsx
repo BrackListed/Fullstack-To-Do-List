@@ -70,7 +70,7 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
             setUserWatchList(result.data)
         }
         fetchWatchlistData()
-    }, [userId, deleteFromWatchlist, addToWatchlist])
+    }, [userId])
 
     useEffect(() => {
         if(hasAdded){
