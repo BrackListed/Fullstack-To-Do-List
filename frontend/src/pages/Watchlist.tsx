@@ -88,7 +88,7 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                         <span className="text-2xl font-semibold">Search</span>
                         <div className="flex gap-2">
                             <div className="relative">
-                                <button onClick={() => setSeriesTypeSelector(!seriesTypeSelector)} className="flex h-9 items-center justify-between rounded-lg px-3 text-[13px] text-gray-300 glass-card-dark backdrop-blur-xl border border-white/10 w-44 pl-4 transition-colors hover:cursor-pointer hover:bg-white/6">Movies <ChevronDown/></button>
+                                <button onClick={() => setSeriesTypeSelector(!seriesTypeSelector)} className="flex h-9 items-center justify-between rounded-lg px-3 text-[13px] text-gray-300 glass-card-dark backdrop-blur-xl border border-white/10 w-44 pl-4 transition-colors hover:cursor-pointer hover:bg-white/6">{seriesType === "Movies" && <span>Movies</span>} {seriesType === "TV" && <span>TV Shows</span>} <ChevronDown/></button>
                                 {seriesTypeSelector && <div className="absolute top-full right-0 mt-1.5 w-48 glass-card-dark backdrop-blur-xl border border-white/10 rounded-xl py-1 shadow-2xl z-10000">
                                     <button onClick={() => {setSeriesType("Movies"); setSeriesTypeSelector(false)}} className="hover:cursor-pointer w-full text-left px-4 py-2 text-[13px] transition-colors text-gray-400 hover:text-white hover:bg-white/5">Movies</button>
                                     <button onClick={() => {setSeriesType("TV"); setSeriesTypeSelector(false)}} className="hover:cursor-pointer w-full text-left px-4 py-2 text-[13px] transition-colors text-gray-400 hover:text-white hover:bg-white/5">TV Shows</button>
@@ -146,7 +146,7 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
                                         <div className="flex-1 min-w-0">
                                             <span className="text-[14px] font-medium text-white line-clamp-1">{series.name}</span>
                                             <div className="flex items-center gap-1.5 mt-1 text-[12px] text-gray-500 flex-wrap">
-                                                <span>Movie</span>
+                                                <span>TV Series</span>
                                                 <span className="text-white/15">|</span>
                                                 <span>{series.first_air_date.slice(0, 4)}</span>
                                                 <span className="text-white/15">|</span>
