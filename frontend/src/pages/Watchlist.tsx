@@ -248,26 +248,32 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
     )
     async function addToWatchlist(movie?: MoviesType, tv?: TvType){
         if(movie){
-            const result = await axios.post(`${API_URL}/watchlist`, {movie: movie})
+            const token = await getToken()
+            const result = await axios.post(`${API_URL}/watchlist`, {movie: movie}, {headers: {Authorization: `Bearer ${token}`}})
             setHasAdded(result.data)
         }else if(tv){
-            const result = await axios.post(`${API_URL}/watchlist`, {tv: tv})
+            const token = await getToken()
+            const result = await axios.post(`${API_URL}/watchlist`, {tv: tv}, {headers: {Authorization: `Bearer ${token}`}})
             setHasAdded(result.data)
         }
     }
     async function deleteFromWatchlist(movie: MoviesType | undefined, tv: TvType | undefined, userId: string | null | undefined){
         if(movie){
-            await axios.delete(`${API_URL}/watchlist/delete/${userId}`, {data: {movie: movie}})
+            const token = await getToken()
+            await axios.delete(`${API_URL}/watchlist/delete/${userId}`, {data: {movie: movie}, headers: {Authorization: `Bearer ${token}`}})
         } else if(tv){
-            await axios.delete(`${API_URL}/watchlist/delete/${userId}`, {data: {tv: tv}})
+            const token = await getToken()
+            await axios.delete(`${API_URL}/watchlist/delete/${userId}`, {data: {tv: tv}, headers: {Authorization: `Bearer ${token}`}})
         }
     }
     async function addToCompleted(movie: MoviesType | undefined, tv: TvType | undefined, userId: string | null | undefined){
         if(movie){
-            const result = await axios.put(`${API_URL}/watchlist/complete/${userId}`, {movie: movie})
+            const token = await getToken()
+            const result = await axios.put(`${API_URL}/watchlist/complete/${userId}`, {movie: movie}, {headers: {Authorization: `Bearer ${token}`}})
             setHasCompleted(result.data)
         }else if(tv){
-            const result = await axios.put(`${API_URL}/watchlist/complete/${userId}`, {tv: tv})
+            const token = await getToken()
+            const result = await axios.put(`${API_URL}/watchlist/complete/${userId}`, {tv: tv}, {headers: {Authorization: `Bearer ${token}`}})
             setHasCompleted(result.data)
         }
     }
