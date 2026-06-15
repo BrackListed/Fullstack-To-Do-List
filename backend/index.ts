@@ -110,7 +110,7 @@ app.post("/watchlist", async(req, res) => {
     const {userId} = (getAuth(req))
     const id = await pool.query("SELECT id FROM users WHERE clerk_user_id = $1", [userId])
     const watchlistMovie = await pool.query("SELECT movie FROM watch_list WHERE user_id = $1", [id.rows[0].id])
-    const movieIsExisting = watchlistMovie.rows.some((movie) => movie.movie?.id === (req.body.movie.id))
+    const movieIsExisting = watchlistMovie.rows.some((movie) => movie.movie?.id === (req.body.movie?.id))
     const watchlistTv = await pool.query("SELECT tv FROM watch_list WHERE user_id = $1", [id.rows[0].id])
     const tvIsExisting = watchlistTv.rows.some((tv) => tv.tv?.id === (req.body.tv.id))
     if(!movieIsExisting && req.body.movie){
