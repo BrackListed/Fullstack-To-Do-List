@@ -90,7 +90,6 @@ export function Watchlist({setToggleSignIn, setToggleSignUp}: WatchlistProps){
             }, 1000);
         }
     }, [hasCompleted])
-    console.log(userWatchList)
     return(
         <div className="flex w-screen h-screen">
             <Left
